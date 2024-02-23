@@ -7,13 +7,21 @@ def driver_control(p: Peripherals):
     last_b_pressing = False
     while True:
         # Spin the left and right groups based on the controller
+        axis3 = p.controller.axis3.position()
+        if axis3 < 3 or axis3 > -3:
+            axis3 = 0
+
+        axis1 = p.controller.axis1.position()
+        if axis1 < 3 or axis1 > -3:
+            axis1 = 0
+
         p.left_motors.spin(
             DirectionType.FORWARD,
-            p.controller.axis3.position() + p.controller.axis1.position(),
+            axis3 + axis1,
             VelocityUnits.PERCENT)
         p.right_motors.spin(
             DirectionType.FORWARD,
-            p.controller.axis3.position() - p.controller.axis1.position(),
+            axis3 - axis1,
             VelocityUnits.PERCENT)
 
         a_pressing = p.controller.buttonA.pressing()
