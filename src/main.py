@@ -1,19 +1,21 @@
-# ---------------------------------------------------------------------------- #
-#                                                                              #
-# 	Module:       main.py                                                      #
-# 	Author:       Programer                                                    #
-# 	Created:      2/21/2024, 4:15:13 PM                                        #
-# 	Description:  V5 project                                                   #
-#                                                                              #
-# ---------------------------------------------------------------------------- #
-
-# Library imports
 from vex import *
+from peripherals import Peripherals
+from driver_control import driver_control
+from autonomous_test import autonomous_test
 
-# Brain should be defined by default
-brain=Brain()
-
-brain.screen.print("Hello V5")
+peripherals = Peripherals()
 
 
-        
+def autonomous():
+    autonomous_test(peripherals)
+
+
+def driver():
+    while True:
+        try:
+            driver_control(peripherals)
+        except:
+            pass
+
+
+Competition(driver, autonomous)
