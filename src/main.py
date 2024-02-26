@@ -2,6 +2,7 @@ from vex import *
 from peripherals import Peripherals
 from driver_control import driver_control
 from autonomous_test import autonomous_test
+from constants import COMPETITION_MODE
 
 peripherals = Peripherals()
 
@@ -18,4 +19,7 @@ def driver():
             pass
 
 
-Competition(driver, autonomous)
+if COMPETITION_MODE:
+    Competition(driver, autonomous)
+else:
+    autonomous()

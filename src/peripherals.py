@@ -1,4 +1,5 @@
 from vex import *
+from constants import WHEEL_TRAVEL_MM, WHEEL_TRACK_WIDTH_MM
 
 
 class Peripherals:
@@ -25,9 +26,14 @@ class Peripherals:
         fright = Motor(Ports.PORT11, True)
         bleft = Motor(Ports.PORT19)
         bright = Motor(Ports.PORT1, True)
-        self.inertial = Inertial(Ports.PORT2)
+        self.inertial = Inertial(Ports.PORT5)
 
         self.left_motors = MotorGroup(fleft, bleft)
         self.right_motors = MotorGroup(fright, bright)
         self.drivetrain = SmartDrive(
-            self.left_motors, self.right_motors, self.inertial, 320, 265)
+            self.left_motors,
+            self.right_motors,
+            self.inertial,
+            WHEEL_TRAVEL_MM,
+            WHEEL_TRACK_WIDTH_MM
+        )
