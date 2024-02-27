@@ -6,7 +6,7 @@ from constants import WHEEL_TRAVEL_MM, WHEEL_TRACK_WIDTH_MM
 
 PID_ACCEPTABLE_ERROR = 2.0  # degrees
 PID_ACCEPTABLE_ERROR_VELOCITY = 0.01  # m/s
-PID_P_CONSTANT = 0.00304
+PID_P_CONSTANT = 0.008056
 PID_I_CONSTANT = 0.0
 PID_D_CONSTANT = 0.0
 PID_TIMEOUT = 10
@@ -21,7 +21,7 @@ def _turn_for(p: Peripherals, angle_delta: int | float) -> float | None:
     starting_real_heading = p.inertial.heading()
     heading_difference = starting_real_heading + angle_delta
     heading = starting_real_heading - heading_difference
-    pid = PID(PID_P_CONSTANT * (WHEEL_TRACK_WIDTH_MM / 100), PID_I_CONSTANT, PID_D_CONSTANT,
+    pid = PID(PID_P_CONSTANT, PID_I_CONSTANT, PID_D_CONSTANT,
               setpoint=0, time_fn=lambda: time_seconds(p))
     real_velocity = PID_ACCEPTABLE_ERROR_VELOCITY
     while abs(heading) >= 2 or real_velocity >= 1.0:
