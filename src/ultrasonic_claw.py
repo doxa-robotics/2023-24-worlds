@@ -14,7 +14,7 @@ class UltrasonicClaw:
         self.ultrasonic = ultrasonic
         self._can_close = True
         self._close_threshold = Threshold(120, False, True)
-        self._can_close_threshold = Threshold(300, True, False)
+        self._can_close_threshold = Threshold(350, True, False)
 
     def update(self):
         distance = self.ultrasonic.distance(MM)
