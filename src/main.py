@@ -1,10 +1,13 @@
 from vex import *
-from peripherals import Peripherals
+from peripherals import RealBotPeripherals, TestBotPeripherals
 from driver_control import driver_control
 from autonomous_test import autonomous_test
-from constants import COMPETITION_MODE
+from constants import COMPETITION_MODE, USE_REAL_BOT
 
-peripherals = Peripherals()
+if USE_REAL_BOT:
+    peripherals = RealBotPeripherals()
+else:
+    peripherals = TestBotPeripherals()
 
 
 def autonomous():
