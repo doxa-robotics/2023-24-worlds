@@ -1,6 +1,6 @@
 {
     "config_version": 1,
-    "name": "2023-24-worlds",
+    "name": "{{ defines/__AUTONOMOUS_ROUTE__ }} | 2023-24-worlds",
     "description": "test",
     "language": "python",
     "default_defines": {
