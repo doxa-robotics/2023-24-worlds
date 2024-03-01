@@ -2,7 +2,6 @@ from simple_pid import PID
 from vex import *
 from peripherals import Peripherals
 from sys import stderr
-from constants import WHEEL_TRAVEL_MM, WHEEL_TRACK_WIDTH_MM
 
 PID_ACCEPTABLE_ERROR = 2.0  # degrees
 PID_ACCEPTABLE_ERROR_VELOCITY = 0.01  # m/s
@@ -28,7 +27,7 @@ def _turn_for(p: Peripherals, angle_delta: int | float) -> float | None:
         velocity_mps = pid(heading)
         if velocity_mps == None:
             raise Exception("PID failed: couldn't get new velocity")
-        velocity_rpm = (velocity_mps * 60.0) / (WHEEL_TRAVEL_MM / 1000)
+        velocity_rpm = (velocity_mps * 60.0) / (p.WHEEL_TRAVEL_MM / 1000)
         p.left_motors.spin(FORWARD, velocity_rpm, units=RPM)
         p.right_motors.spin(REVERSE, velocity_rpm, units=RPM)
         real_velocity = p.left_motors.velocity()

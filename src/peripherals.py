@@ -1,5 +1,4 @@
 from vex import *
-from constants import WHEEL_TRAVEL_MM, WHEEL_TRACK_WIDTH_MM
 
 
 class Peripherals:
@@ -13,8 +12,14 @@ class Peripherals:
     wing_piston: Pneumatics
     front_sonar: Sonar
 
+    WHEEL_TRAVEL_MM: int
+    WHEEL_TRACK_WIDTH_MM: int
+
 
 class RealBotPeripherals(Peripherals):
+    WHEEL_TRAVEL_MM = 460
+    WHEEL_TRACK_WIDTH_MM = 305
+
     def __init__(self) -> None:
         self.brain = Brain()
         self.controller = Controller()
@@ -42,12 +47,15 @@ class RealBotPeripherals(Peripherals):
             self.left_motors,
             self.right_motors,
             self.inertial,
-            WHEEL_TRAVEL_MM,
-            WHEEL_TRACK_WIDTH_MM
+            self.WHEEL_TRAVEL_MM,
+            self.WHEEL_TRACK_WIDTH_MM
         )
 
 
 class TestBotPeripherals(Peripherals):
+    WHEEL_TRAVEL_MM = 320
+    WHEEL_TRACK_WIDTH_MM = 265
+
     def __init__(self) -> None:
         self.brain = Brain()
         self.controller = Controller()
@@ -71,6 +79,6 @@ class TestBotPeripherals(Peripherals):
             self.left_motors,
             self.right_motors,
             self.inertial,
-            WHEEL_TRAVEL_MM,
-            WHEEL_TRACK_WIDTH_MM
+            self.WHEEL_TRAVEL_MM,
+            self.WHEEL_TRACK_WIDTH_MM
         )
