@@ -57,14 +57,16 @@ class TestBotPeripherals(Peripherals):
 
         self.front_sonar = Sonar(self.brain.three_wire_port.c)
 
-        fleft = Motor(Ports.PORT20)
-        fright = Motor(Ports.PORT11, True)
-        bleft = Motor(Ports.PORT19)
-        bright = Motor(Ports.PORT1, True)
         self.inertial = Inertial(Ports.PORT5)
 
-        self.left_motors = MotorGroup(fleft, bleft)
-        self.right_motors = MotorGroup(fright, bright)
+        self.left_motors = MotorGroup(
+            Motor(Ports.PORT20),
+            Motor(Ports.PORT19)
+        )
+        self.right_motors = MotorGroup(
+            Motor(Ports.PORT11, True),
+            Motor(Ports.PORT1, True)
+        )
         self.drivetrain = SmartDrive(
             self.left_motors,
             self.right_motors,
