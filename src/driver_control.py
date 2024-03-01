@@ -2,6 +2,7 @@ from vex import *
 from peripherals import Peripherals
 from ultrasonic_claw import UltrasonicClaw
 from autonomous_common import debug
+from constants import TURNING_SPEED_FACTOR
 
 
 def _damp_controller(val):
@@ -30,11 +31,11 @@ def driver_control(p: Peripherals):
 
         p.left_motors.spin(
             DirectionType.FORWARD,
-            axis3 + axis1,
+            axis3 + axis1*TURNING_SPEED_FACTOR,
             VelocityUnits.PERCENT)
         p.right_motors.spin(
             DirectionType.FORWARD,
-            axis3 - axis1,
+            axis3 - axis1*TURNING_SPEED_FACTOR,
             VelocityUnits.PERCENT)
 
         a_pressing = p.controller.buttonA.pressing()

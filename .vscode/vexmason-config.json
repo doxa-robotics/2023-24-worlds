@@ -8,6 +8,7 @@
         "__WHEEL_TRACK_WIDTH_MM__": 265,
         "__WHEEL_TRAVEL_MM__": 320,
         "__USE_REAL_BOT__": true,
-        "__AUTONOMOUS_ROUTE__": "_"
+        "__AUTONOMOUS_ROUTE__": "_",
+        "__TURNING_SPEED_FACTOR__": 0.5
     }
 }
