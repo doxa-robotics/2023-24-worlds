@@ -5,8 +5,6 @@ from vex import *
 from autonomous_common import debug
 from constants import AUTONOMOUS_ROUTE
 
-BACKGROUND_COLOR = 0xaaaaff
-
 BRAIN_WIDTH_PX = 480
 BRAIN_HEIGHT_PX = 240
 
@@ -88,6 +86,68 @@ def ui_crashpad(context: str):
     return decorator
 
 
+class UiTheme:
+    background: Color
+    text: Color
+
+    tile: Color
+    tile_text: Color
+    tile_pressed: Color
+    tile_selected: Color
+    tile_selected_border: Color
+
+    button: Color
+    button_text: Color
+    button_pressed: Color
+    button_selected: Color
+    button_selected_border: Color
+    button_disabled: Color
+    button_disabled_text: Color
+
+    status: Color
+    status_text: Color
+
+    # python 3.7 dataclasses nashi...
+    def __init__(
+        self,
+        background: Color,
+        text: Color,
+
+        tile: Color,
+        tile_text: Color,
+        tile_pressed: Color,
+        tile_selected: Color,
+        tile_selected_border: Color,
+
+        button: Color,
+        button_text: Color,
+        button_pressed: Color,
+        button_selected: Color,
+        button_selected_border: Color,
+        button_disabled: Color,
+        button_disabled_text: Color,
+
+        status: Color,
+        status_text: Color
+    ) -> None:
+        self.background = background
+        self.text = text
+        self.tile = tile
+        self.tile_text = tile_text
+        self.tile_pressed = tile_pressed
+        self.tile_selected = tile_selected
+        self.tile_selected_border = tile_selected_border
+        self.button = button
+        self.button_text = button_text
+        self.button_pressed = button_pressed
+        self.button_selected = button_selected
+        self.button_selected_border = button_selected_border
+        self.button_disabled = button_disabled
+        self.button_disabled_text = button_disabled_text
+        self.status = status
+        self.status_text = status_text
+
+
 class GenericButton:
     pressed: bool
     selected: bool
@@ -115,7 +175,7 @@ class GenericButton:
         self.last_selected = True
         self.selected = False
 
-    def render(self, screen: Brain.Lcd, incremental: bool = False):
+    def render(self, screen: Brain.Lcd, theme: UiTheme, incremental: bool = False):
         pass
 
     def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int) -> bool:
@@ -150,16 +210,17 @@ class RouteButton(GenericButton):
             value=value
         )
 
-    def render(self, screen: Brain.Lcd, incremental: bool = False):
+    def render(self, screen: Brain.Lcd, theme: UiTheme, incremental: bool = False):
         if incremental and not self.needs_update():
             return
         if self.pressed:
-            screen.set_fill_color(0xaaaaaa)
+            screen.set_fill_color(theme.tile_pressed)
+        elif self.selected:
+            screen.set_fill_color(theme.tile_selected_border)
         else:
-            screen.set_fill_color(0xffffff)
+            screen.set_fill_color(theme.tile)
         if self.selected:
-            screen.set_pen_color(0x5555ff)
-            screen.set_fill_color(0xaaaaff)
+            screen.set_pen_color(theme.tile_selected)
             screen.set_pen_width(3)
         else:
             screen.set_pen_width(0)
@@ -170,7 +231,7 @@ class RouteButton(GenericButton):
             height=self.height
         )
         screen.set_font(FontType.PROP20)
-        screen.set_pen_color(0x000000)
+        screen.set_pen_color(theme.tile_text)
         screen.print_at(
             self.text,
             x=self.x + self.width/2 - screen.get_string_width(self.text)/2,
@@ -184,9 +245,9 @@ class RouteButtonGroup:
     def __init__(self, *buttons: RouteButton) -> None:
         self.buttons = list(buttons)
 
-    def render(self, screen: Brain.Lcd, incremental: bool = False):
+    def render(self, screen: Brain.Lcd, theme: UiTheme, incremental: bool = False):
         for button in self.buttons:
-            button.render(screen, incremental)
+            button.render(screen, theme, incremental)
 
     def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int):
         for button in self.buttons:
@@ -217,20 +278,19 @@ class NormalButton(GenericButton):
         self.disabled = initial_disabled
         super().__init__(*args, **kwargs)
 
-    def render(self, screen: Brain.Lcd, incremental: bool = False):
+    def render(self, screen: Brain.Lcd, theme: UiTheme, incremental: bool = False):
         if incremental and not self.needs_update():
             return
         if self.disabled:
-            screen.set_fill_color(0xaaaaaa)
-            screen.set_pen_color(0x888888)
+            screen.set_fill_color(theme.button_disabled)
         elif self.pressed:
-            screen.set_fill_color(0x9999ff)
-            screen.set_pen_color(0x000000)
+            screen.set_fill_color(theme.button_pressed)
+        elif self.selected:
+            screen.set_fill_color(theme.button_selected)
         else:
-            screen.set_fill_color(0x5555ff)
-            screen.set_pen_color(0x000000)
+            screen.set_fill_color(theme.button)
         if self.selected:
-            screen.set_pen_color(0x000000)
+            screen.set_pen_color(theme.button_selected_border)
             screen.set_pen_width(3)
         else:
             screen.set_pen_width(0)
@@ -240,6 +300,10 @@ class NormalButton(GenericButton):
             width=self.width,
             height=self.height
         )
+        if self.disabled:
+            screen.set_pen_color(theme.button_disabled_text)
+        else:
+            screen.set_pen_color(theme.button_text)
         screen.set_font(FontType.PROP20)
         screen.print_at(
             self.text,
@@ -263,7 +327,12 @@ class StatusBar:
     short_team: str
     status_text: str
     brain: Brain
+
+    last_text: str
+    text: str
+    last_battery: float
     battery: float  # between 0 and 1
+    last_has_sdcard: bool
     has_sdcard: bool
 
     def __init__(self, brain: Brain, team: str, short_team: str) -> None:
@@ -271,31 +340,56 @@ class StatusBar:
         self.short_team = short_team
         self.status_text = ""
         self.brain = brain
-        self.battery = 0.0
-        self.has_sdcard = False
 
-    def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int):
+        self.update()
+
+        self.last_battery = -self.battery
+        self.last_has_sdcard = not self.has_sdcard
+        self.last_text = "_{}".format(self.text)
+
+    def update(self):
         self.battery = self.brain.battery.capacity() / 100
+        self.has_sdcard = self.brain.sdcard.is_inserted()
+        if len(self.status_text) > 0:
+            self.text = "{} - {}".format(self.short_team, self.status_text)
+        else:
+            self.text = self.team
 
     def update_to_route_select(self):
         self.status_text = ""
+        self.update()
 
     def update_to_route(self, route_id: str):
         self.status_text = "running route {}".format(
             AUTONOMOUS_ROUTE_NAMES[route_id])
+        self.update()
 
     def update_to_opcontrol(self):
         self.status_text = "opcontrol period"
+        self.update()
 
     def update_to_waiting_no_route(self):
         self.status_text = "waiting for match start..."
+        self.update()
 
     def update_to_waiting(self, selected: str):
         self.status_text = "waiting to start route '{}'...".format(selected)
+        self.update()
 
-    def render(self, screen: Brain.Lcd):
+    def needs_update(self):
+        return (self.last_battery != self.battery or
+                self.last_has_sdcard != self.has_sdcard or
+                self.last_text != self.text)
+
+    def render(self, screen: Brain.Lcd, theme: UiTheme, incremental: bool = False):
+        if incremental and not self.needs_update():
+            return
+        self.last_battery = self.battery
+        self.last_has_sdcard = self.has_sdcard
+        self.last_text = self.text
+
         screen.set_pen_width(0)
-        screen.set_fill_color(0x7777ff)
+        screen.set_fill_color(theme.status)
         screen.draw_rectangle(
             x=0,
             y=BRAIN_HEIGHT_PX - BOTTOM_BAR_HEIGHT,
@@ -304,13 +398,9 @@ class StatusBar:
         )
 
         screen.set_font(FontType.MONO15)
-        screen.set_pen_color(0x000000)
-        if len(self.status_text) > 0:
-            text = "{} - {}".format(self.short_team, self.status_text)
-        else:
-            text = self.team
+        screen.set_pen_color(theme.status_text)
         screen.print_at(
-            text,
+            self.text,
             x=PADDING,
             y=BRAIN_HEIGHT_PX - 12,
             opaque=False
@@ -371,7 +461,7 @@ class StatusBar:
             width=sdcard_width,
             height=sdcard_height
         )
-        screen.set_pen_color(0x7777ff)
+        screen.set_pen_color(theme.status)
         screen.set_pen_width(5)
         screen.draw_line(
             x1=BRAIN_WIDTH_PX - PADDING - battery_width - 4 - item_padding,
@@ -476,8 +566,8 @@ class AutonSelectorScreen:
             text="Select"
         )
 
-    def render(self, screen: Brain.Lcd):
-        screen.set_fill_color(BACKGROUND_COLOR)
+    def render(self, screen: Brain.Lcd, theme: UiTheme):
+        screen.set_fill_color(theme.background)
         screen.set_pen_width(0)
         screen.draw_rectangle(
             x=0,
@@ -487,8 +577,7 @@ class AutonSelectorScreen:
         )
 
         screen.set_font(FontType.PROP30)
-        screen.set_fill_color(BACKGROUND_COLOR)
-        screen.set_pen_color(0x000000)
+        screen.set_pen_color(theme.text)
         if self.route_type is None:
             text = ROUTE_TYPE_TITLE_TEXT
         else:
@@ -496,27 +585,28 @@ class AutonSelectorScreen:
         screen.print_at(
             text,
             x=BRAIN_WIDTH_PX/2 - screen.get_string_width(text)/2,
-            y=TOP_PADDING
+            y=TOP_PADDING,
+            opaque=False
         )
 
         button_group_selected = self.button_group.selected()
 
         if self.route_type is not None and button_group_selected is not None:
             screen.set_font(FontType.PROP20)
-            screen.set_fill_color(BACKGROUND_COLOR)
-            screen.set_pen_color(0x000000)
+            screen.set_pen_color(theme.text)
             text = CONFIRM_TEXT.format(button_group_selected)
             screen.print_at(
                 text,
                 x=BRAIN_WIDTH_PX/2 - screen.get_string_width(text)/2,
-                y=BRAIN_HEIGHT_PX - BOTTOM_BAR_HEIGHT - BOTTOM_PADDING - 15
+                y=BRAIN_HEIGHT_PX - BOTTOM_BAR_HEIGHT - BOTTOM_PADDING - 15,
+                opaque=False
             )
 
-        self.button_group.render(screen)
+        self.button_group.render(screen, theme)
 
         if self.back_button is not None:
-            self.back_button.render(screen)
-        self.next_button.render(screen)
+            self.back_button.render(screen, theme)
+        self.next_button.render(screen, theme)
 
     def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int):
         self.button_group.update(touching, clicked, touch_x, touch_y)
@@ -554,6 +644,8 @@ class UiHandler:
 
     status_bar: StatusBar
 
+    theme: UiTheme
+
     def __init__(self, brain: Brain, team: str, short_team: str) -> None:
         self.brain = brain
         self.resolved_route = AUTONOMOUS_ROUTE
@@ -565,6 +657,28 @@ class UiHandler:
         self.touch_x = -1
         self.touch_y = -1
 
+        self.theme = UiTheme(
+            background=Color(0xaaaaff),
+            text=Color(0x000000),
+
+            tile=Color(0xffffff),
+            tile_text=Color(0x000000),
+            tile_pressed=Color(0xaaaaaa),
+            tile_selected=Color(0x5555ff),
+            tile_selected_border=Color(0xaaaaff),
+
+            button=Color(0x5555ff),
+            button_text=Color(0x000000),
+            button_pressed=Color(0x9999ff),
+            button_selected=Color(0x5555ff),
+            button_selected_border=Color(0x000000),
+            button_disabled=Color(0xaaaaaa),
+            button_disabled_text=Color(0x888888),
+
+            status=Color(0x7777ff),
+            status_text=Color(0x000000)
+        )
+
     def update(self):
         self.touching = self.brain.screen.pressing()
         self.clicked = not self.touching and self.was_touching
@@ -572,10 +686,10 @@ class UiHandler:
         self.touch_x = self.brain.screen.x_position()
         self.touch_y = self.brain.screen.y_position()
 
-        self.status_bar.update(*self.touch_info())
+        self.status_bar.update()
 
     def render(self):
-        self.status_bar.render(self.brain.screen)
+        self.status_bar.render(self.brain.screen, self.theme)
 
     def touch_info(self) -> tuple[bool, bool, int, int]:
         return (self.touching, self.clicked, self.touch_x, self.touch_y)
@@ -587,7 +701,7 @@ class UiHandler:
         while selector.resolved is None:
             selector.update(*self.touch_info())
             self.update()
-            selector.render(self.brain.screen)
+            selector.render(self.brain.screen, self.theme)
             self.render()
             self.brain.screen.render()
         self.brain.screen.clear_screen()
