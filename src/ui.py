@@ -275,7 +275,7 @@ class StatusBar:
         self.has_sdcard = False
 
     def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int):
-        self.battery = 0.9
+        self.battery = self.brain.battery.capacity() / 100
 
     def update_to_route_select(self):
         self.status_text = ""
