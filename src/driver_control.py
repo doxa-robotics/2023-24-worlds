@@ -1,8 +1,9 @@
 from vex import *
-from peripherals import Peripherals
-from ultrasonic_claw import UltrasonicClaw
+
 from autonomous_common import debug
 from constants import TURNING_SPEED_FACTOR
+from peripherals import Peripherals
+from ultrasonic_claw import UltrasonicClaw
 
 
 def _damp_controller(val):
