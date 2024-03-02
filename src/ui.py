@@ -441,6 +441,7 @@ class AutonSelectorScreen:
             raise Exception("invalid state")
         routes = [route for route in AUTONOMOUS_ROUTE_NAMES.keys()
                   if route.startswith(self.route_type)]
+        routes.sort(key=lambda id: AUTONOMOUS_ROUTE_NAMES[id])
 
         buttons = []
         # I would use enumerate but apparently the VEX V5 brain doesn't support
