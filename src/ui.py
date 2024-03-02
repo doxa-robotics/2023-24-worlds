@@ -31,19 +31,19 @@ BUTTON_WIDTH = 80
 # the first letters of the ID are important - they decide which subcategory
 # the route is
 AUTONOMOUS_ROUTE_NAMES = {
-    "o1": "Offense 1",
-    "o2": "Offense 2",
-    "o3": "Offense 3",
-    "o4": "Offense 4",
-    "o5": "Offense 5",
-    "o6": "Offense 6",
+    "o1": "(not completed)",
+    "o2": "(not completed)",
+    "o3": "(not completed)",
+    "o4": "(not completed)",
+    "o5": "(not completed)",
+    "o6": "(not completed)",
 
-    "d1": "Defense 1",
-    "d2": "Defense 2",
-    "d3": "Defense 3",
-    "d4": "Defense 4",
-    "d5": "Defense 5",
-    "d6": "Defense 6",
+    "d1": "(not completed)",
+    "d2": "(not completed)",
+    "d3": "(not completed)",
+    "d4": "(not completed)",
+    "d5": "(not completed)",
+    "d6": "(not completed)",
 
     "test": "Test",
 
