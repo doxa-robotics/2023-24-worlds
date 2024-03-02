@@ -147,6 +147,54 @@ class UiTheme:
         self.status = status
         self.status_text = status_text
 
+    @classmethod
+    def theme_blue(cls):
+        return cls(
+            background=Color(0xaaaaff),
+            text=Color(0x000000),
+
+            tile=Color(0xffffff),
+            tile_text=Color(0x000000),
+            tile_pressed=Color(0xaaaaaa),
+            tile_selected=Color(0x8888ff),
+            tile_selected_border=Color(0x5555ff),
+
+            button=Color(0x5555ff),
+            button_text=Color(0x000000),
+            button_pressed=Color(0x9999ff),
+            button_selected=Color(0x5555ff),
+            button_selected_border=Color(0x000000),
+            button_disabled=Color(0xaaaaaa),
+            button_disabled_text=Color(0x888888),
+
+            status=Color(0x7777ff),
+            status_text=Color(0x000000)
+        )
+
+    @classmethod
+    def theme_black(cls):
+        return cls(
+            background=Color(0x222222),
+            text=Color(0x999999),
+
+            tile=Color(0x000000),
+            tile_text=Color(0xcccccc),
+            tile_pressed=Color(0x333333),
+            tile_selected=Color(0x555555),
+            tile_selected_border=Color(0xffffff),
+
+            button=Color(0x444444),
+            button_text=Color(0xffffff),
+            button_pressed=Color(0x333333),
+            button_selected=Color(0x444444),
+            button_selected_border=Color(0xffffff),
+            button_disabled=Color(0x2a2a2a),
+            button_disabled_text=Color(0x666666),
+
+            status=Color(0x333333),
+            status_text=Color(0x888888)
+        )
+
 
 class GenericButton:
     pressed: bool
@@ -216,11 +264,11 @@ class RouteButton(GenericButton):
         if self.pressed:
             screen.set_fill_color(theme.tile_pressed)
         elif self.selected:
-            screen.set_fill_color(theme.tile_selected_border)
+            screen.set_fill_color(theme.tile_selected)
         else:
             screen.set_fill_color(theme.tile)
         if self.selected:
-            screen.set_pen_color(theme.tile_selected)
+            screen.set_pen_color(theme.tile_selected_border)
             screen.set_pen_width(3)
         else:
             screen.set_pen_width(0)
@@ -657,27 +705,7 @@ class UiHandler:
         self.touch_x = -1
         self.touch_y = -1
 
-        self.theme = UiTheme(
-            background=Color(0xaaaaff),
-            text=Color(0x000000),
-
-            tile=Color(0xffffff),
-            tile_text=Color(0x000000),
-            tile_pressed=Color(0xaaaaaa),
-            tile_selected=Color(0x5555ff),
-            tile_selected_border=Color(0xaaaaff),
-
-            button=Color(0x5555ff),
-            button_text=Color(0x000000),
-            button_pressed=Color(0x9999ff),
-            button_selected=Color(0x5555ff),
-            button_selected_border=Color(0x000000),
-            button_disabled=Color(0xaaaaaa),
-            button_disabled_text=Color(0x888888),
-
-            status=Color(0x7777ff),
-            status_text=Color(0x000000)
-        )
+        self.theme = UiTheme.theme_black()
 
     def update(self):
         self.touching = self.brain.screen.pressing()
