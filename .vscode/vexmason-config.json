@@ -1,12 +1,12 @@
 {
-    "config_version": 1,
-    "name": "{{ defines/__AUTONOMOUS_ROUTE__ }} | 2023-24-worlds",
-    "description": "test",
-    "language": "python",
-    "default_defines": {
-        "__COMPETITION_MODE__": true,
-        "__USE_REAL_BOT__": true,
-        "__AUTONOMOUS_ROUTE__": "_",
-        "__TURNING_SPEED_FACTOR__": 0.5
-    }
+  "config_version": 1,
+  "name": "99484 2023-24 Worlds",
+  "description": "Default autonomous route ID: {{ defines/__AUTONOMOUS_ROUTE__ }}",
+  "language": "python",
+  "default_defines": {
+    "__COMPETITION_MODE__": true,
+    "__USE_REAL_BOT__": true,
+    "__AUTONOMOUS_ROUTE__": "x",
+    "__TURNING_SPEED_FACTOR__": 0.5
+  }
 }

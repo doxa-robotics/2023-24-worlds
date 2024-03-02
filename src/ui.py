@@ -609,7 +609,7 @@ class UiHandler:
 
     @ui_crashpad("ui rendering")
     def waiting_ui(self) -> None:
-        if self.resolved_route is None:
+        if self.resolved_route is None or self.resolved_route == "x":
             self.status_bar.update_to_waiting_no_route()
         else:
             self.status_bar.update_to_waiting(self.resolved_route)
