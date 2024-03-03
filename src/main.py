@@ -18,6 +18,10 @@ ui_handler = UiHandler(peripherals.brain, "DOXA Robotics 99484", "99484")
 
 
 def autonomous():
+    # this function is called as a thread so we have to make sure
+    ui_handler.cancel_resolve_route()
+    # wait a negligible amount so the main thread can realize it should stop
+    wait(10)
     ui_handler.route_ui(selected_autonomous)
     if selected_autonomous == "test":
         autonomous_test(peripherals)
@@ -33,11 +37,13 @@ def driver():
 
 
 if COMPETITION_MODE:
+    # initialize the competition first so it works if route resolution fails
+    Competition(driver, autonomous)
+
     ui_handler.resolve_route()
     selected_autonomous = ui_handler.resolved_route
     debug("resolved autonomous route: {}".format(selected_autonomous))
     ui_handler.waiting_ui()
-    Competition(driver, autonomous)
 else:
     ui_handler.waiting_ui()
     autonomous()

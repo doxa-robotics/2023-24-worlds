@@ -694,10 +694,13 @@ class UiHandler:
 
     theme: UiTheme
 
+    resolve_route_canceled: bool
+
     def __init__(self, brain: Brain, team: str, short_team: str) -> None:
         self.brain = brain
         self.resolved_route = AUTONOMOUS_ROUTE
         self.was_touching = False
+        self.resolve_route_canceled = False
         self.status_bar = StatusBar(brain, team, short_team)
 
         self.touching = False
@@ -726,7 +729,7 @@ class UiHandler:
     def resolve_route(self) -> None:
         self.status_bar.update_to_route_select()
         selector = AutonSelectorScreen(self.brain)
-        while selector.resolved is None:
+        while selector.resolved is None and not self.resolve_route_canceled:
             selector.update(*self.touch_info())
             self.update()
             selector.render(self.brain.screen, self.theme)
@@ -734,7 +737,11 @@ class UiHandler:
             self.brain.screen.render()
         self.brain.screen.clear_screen()
         self.brain.screen.render()
-        self.resolved_route = selector.resolved
+        if selector.resolved is not None:
+            self.resolved_route = selector.resolved
+
+    def cancel_resolve_route(self) -> None:
+        self.resolve_route_canceled = True
 
     @ui_crashpad("ui rendering")
     def route_ui(self, route: str) -> None:
