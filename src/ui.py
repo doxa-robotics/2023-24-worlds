@@ -557,6 +557,8 @@ class MotorTempWidget(GenericButton):
     popup_width = 120
     popup_height = 80
 
+    hidden = False
+
     def __init__(self, peripherals: Peripherals, *args, **kwargs) -> None:
         self.peripherals = peripherals
         super().__init__(*args, **kwargs, text="Temperatures")
@@ -582,6 +584,8 @@ class MotorTempWidget(GenericButton):
     def render(self, screen: Brain.Lcd, theme: UiTheme, incremental: bool = False):
         if incremental and not self.needs_update():
             raise Exception("MotorTempWidget can't be incrementally rendered")
+        if self.hidden:
+            return
         if self.pressed:
             screen.set_fill_color(theme.button_pressed)
         elif self.selected:
@@ -841,11 +845,10 @@ class UiHandler:
         self.status_bar.update()
         return self.motor_temp_widget.update(*self.touch_info())
 
-    def render(self, skip_image: bool = False, skip_temp_widget: bool = False):
+    def render(self, skip_image: bool = False):
         if not skip_image:
             self.brain.screen.draw_image_from_file("logo.bmp", 0, 0)
-        if not skip_temp_widget:
-            self.motor_temp_widget.render(self.brain.screen, self.theme)
+        self.motor_temp_widget.render(self.brain.screen, self.theme)
         self.status_bar.render(self.brain.screen, self.theme)
 
     def touch_info(self) -> tuple[bool, bool, int, int]:
@@ -873,18 +876,20 @@ class UiHandler:
     @ui_crashpad("ui rendering")
     def route_ui(self, route: str) -> None:
         self.motor_temp_widget.set_selected(False)
+        self.motor_temp_widget.hidden = True
         self.status_bar.update_to_route(route)
         self.update()
-        self.render(skip_temp_widget=True)
+        self.render()
         self.brain.screen.render()
         debug("rendered")
 
     @ui_crashpad("ui rendering")
     def opcontrol_ui(self) -> None:
+        self.motor_temp_widget.hidden = True
         self.motor_temp_widget.set_selected(False)
         self.status_bar.update_to_opcontrol()
         self.update()
-        self.render(skip_temp_widget=True)
+        self.render()
         self.brain.screen.render()
 
     @ui_crashpad("ui rendering")
