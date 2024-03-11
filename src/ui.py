@@ -884,7 +884,7 @@ class UiHandler:
         self.motor_temp_widget.set_selected(False)
         self.status_bar.update_to_opcontrol()
         self.update()
-        self.render()
+        self.render(skip_temp_widget=True)
         self.brain.screen.render()
 
     @ui_crashpad("ui rendering")
@@ -893,7 +893,6 @@ class UiHandler:
             self.status_bar.update_to_waiting_no_route()
         else:
             self.status_bar.update_to_waiting(self.resolved_route)
-        self.resolve_route_canceled = False
         while True:
             self.update()
             self.render()

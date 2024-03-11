@@ -32,7 +32,7 @@ def driver():
     # this function is called as a thread so we have to make sure
     ui_handler.cancel_resolve_route()
     # wait a negligible amount so the main thread can realize it should stop
-    wait(20)
+    wait(50)
     ui_handler.opcontrol_ui()
     while True:
         try:
