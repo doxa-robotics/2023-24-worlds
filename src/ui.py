@@ -4,6 +4,7 @@ from vex import *
 
 from autonomous_common import debug
 from constants import AUTONOMOUS_ROUTE
+from peripherals import Peripherals
 
 BRAIN_WIDTH_PX = 480
 BRAIN_HEIGHT_PX = 240
@@ -104,6 +105,8 @@ class UiTheme:
     button_disabled: Color
     button_disabled_text: Color
 
+    button_fatal: Color
+
     status: Color
     status_text: Color
 
@@ -128,7 +131,9 @@ class UiTheme:
         button_disabled_text: Color,
 
         status: Color,
-        status_text: Color
+        status_text: Color,
+
+        button_fatal: Color
     ) -> None:
         self.background = background
         self.text = text
@@ -146,6 +151,7 @@ class UiTheme:
         self.button_disabled_text = button_disabled_text
         self.status = status
         self.status_text = status_text
+        self.button_fatal = button_fatal
 
     @classmethod
     def theme_blue(cls):
@@ -168,7 +174,8 @@ class UiTheme:
             button_disabled_text=Color(0x888888),
 
             status=Color(0x7777ff),
-            status_text=Color(0x000000)
+            status_text=Color(0x000000),
+            button_fatal=Color(0xff0000)
         )
 
     @classmethod
@@ -192,7 +199,8 @@ class UiTheme:
             button_disabled_text=Color(0x666666),
 
             status=Color(0x333333),
-            status_text=Color(0x888888)
+            status_text=Color(0x888888),
+            button_fatal=Color(0xff0000)
         )
 
 
@@ -232,8 +240,8 @@ class GenericButton:
         self.pressed = touching and in_box
         if in_box and clicked:
             self.selected = not self.selected
-            return self.selected
-        return False
+            return True
+        return in_box
 
     def needs_update(self):
         needs_update = (self.last_pressed != self.pressed or
@@ -297,14 +305,17 @@ class RouteButtonGroup:
         for button in self.buttons:
             button.render(screen, theme, incremental)
 
-    def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int):
+    def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int) -> bool:
         for button in self.buttons:
-            clear_selected_state = button.update(
+            consumed = button.update(
                 touching, clicked, touch_x, touch_y)
-            if clear_selected_state:
+            if button.selected:
                 for clearing_button in self.buttons:
                     if clearing_button is not button:
                         clearing_button.set_selected(False)
+            if consumed:
+                return True
+        return False
 
     def has_selected(self) -> bool:
         for button in self.buttons:
@@ -364,7 +375,7 @@ class NormalButton(GenericButton):
         if self.disabled:
             self.selected = False
             self.pressed = False
-        return not self.disabled and clicked
+        return clicked
 
     def set_disabled(self, value: bool):
         self.disabled = value
@@ -417,7 +428,7 @@ class StatusBar:
         self.update()
 
     def update_to_waiting_no_route(self):
-        self.status_text = "waiting for match start..."
+        self.status_text = "skipping autonomous, waiting..."
         self.update()
 
     def update_to_waiting(self, selected: str):
@@ -535,6 +546,101 @@ class StatusBar:
                 y1=BRAIN_HEIGHT_PX - BOTTOM_BAR_HEIGHT/2 - sdcard_height/2 - 1,
                 x2=BRAIN_WIDTH_PX - PADDING - battery_width - item_padding + 1,
                 y2=BRAIN_HEIGHT_PX - BOTTOM_BAR_HEIGHT/2 + sdcard_height/2 + 1
+            )
+
+
+class MotorTempWidget(GenericButton):
+    peripherals: Peripherals
+    worst_left_motor_temp: float
+    worst_right_motor_temp: float
+
+    popup_width = 120
+    popup_height = 80
+
+    def __init__(self, peripherals: Peripherals, *args, **kwargs) -> None:
+        self.peripherals = peripherals
+        super().__init__(*args, **kwargs, text="Temperatures")
+
+    def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int) -> bool:
+        self.worst_left_motor_temp = 0
+        for motor in self.peripherals.left_motors_list:
+            temp = motor.temperature()
+            if temp > self.worst_left_motor_temp:
+                self.worst_left_motor_temp = temp
+        self.worst_right_motor_temp = 0
+        for motor in self.peripherals.right_motors_list:
+            temp = motor.temperature()
+            if temp > self.worst_right_motor_temp:
+                self.worst_right_motor_temp = temp
+        consumed = super().update(touching, clicked, touch_x, touch_y)
+        consumed = consumed or (
+            self.x <= touch_x <= self.x + self.popup_width and
+            self.y - self.popup_height <= touch_y <= self.y
+        )
+        return consumed
+
+    def render(self, screen: Brain.Lcd, theme: UiTheme, incremental: bool = False):
+        if incremental and not self.needs_update():
+            raise Exception("MotorTempWidget can't be incrementally rendered")
+        if self.pressed:
+            screen.set_fill_color(theme.button_pressed)
+        elif self.selected:
+            screen.set_fill_color(theme.button_selected)
+        else:
+            screen.set_fill_color(theme.button)
+        if self.selected:
+            screen.set_pen_color(theme.button_selected_border)
+            screen.set_pen_width(3)
+        else:
+            screen.set_pen_width(0)
+        screen.draw_rectangle(
+            x=self.x,
+            y=self.y,
+            width=self.width,
+            height=self.height
+        )
+        screen.set_font(FontType.MONO12)
+        screen.set_pen_color(theme.button_text)
+        screen.print_at(
+            self.text,
+            x=self.x + self.width/2 - screen.get_string_width(self.text)/2,
+            y=self.y + self.height/2 + 3
+        )
+        if self.selected:
+            screen.set_fill_color(theme.button_selected)
+            screen.set_pen_width(0)
+            screen.draw_rectangle(
+                x=self.x,
+                y=self.y - self.popup_height,
+                width=self.popup_width,
+                height=self.popup_height
+            )
+            screen.set_pen_color(theme.button_text)
+            screen.set_font(FontType.MONO12)
+            text = "Left motors (max)"
+            screen.print_at(
+                text,
+                x=self.x+5,
+                y=self.y - self.popup_height + 15
+            )
+            screen.set_font(FontType.MONO20)
+            screen.print_at(
+                "{}C".format(self.worst_left_motor_temp),
+                x=self.x+5,
+                y=self.y - self.popup_height + 34
+            )
+            screen.set_font(FontType.MONO12)
+            text = "Right motors (max)"
+            screen.print_at(
+                text,
+                x=self.x+5,
+                y=self.y - self.popup_height + 52
+            )
+            screen.set_font(FontType.MONO20)
+            screen.print_at(
+                "{}C".format(self.worst_right_motor_temp),
+                x=self.x+5,
+                y=self.y - self.popup_height + 71
             )
 
 
@@ -657,30 +763,39 @@ class AutonSelectorScreen:
         self.next_button.render(screen, theme)
 
     def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int):
-        self.button_group.update(touching, clicked, touch_x, touch_y)
-
-        back_clicked = False
-        if self.back_button is not None:
-            back_clicked = self.back_button.update(
-                touching, clicked, touch_x, touch_y)
-        next_clicked = self.next_button.update(
+        consumed = self.button_group.update(
             touching, clicked, touch_x, touch_y)
         self.next_button.set_disabled(not self.button_group.has_selected())
+        if consumed:
+            return True
 
-        if back_clicked:
-            self.route_type = None
-            self.update_to_route_type_select()
+        if self.back_button is not None:
+            consumed = self.back_button.update(
+                touching, clicked, touch_x, touch_y)
+            if self.back_button.selected:
+                self.route_type = None
+                self.update_to_route_type_select()
+            if consumed:
+                return True
 
-        if next_clicked:
+        consumed = self.next_button.update(
+            touching, clicked, touch_x, touch_y)
+        if self.next_button.selected:
             if self.route_type is None:
                 self.route_type = self.button_group.selected()
                 self.update_to_route_select()
             else:
                 self.resolved = self.button_group.selected()
+        if consumed:
+            return True
+
+        return False
 
 
 class UiHandler:
     brain: Brain
+    peripherals: Peripherals
+
     resolved_route: str
 
     was_touching: bool
@@ -690,17 +805,23 @@ class UiHandler:
     touch_x: int
     touch_y: int
 
+    motor_temp_widget: MotorTempWidget
     status_bar: StatusBar
 
     theme: UiTheme
 
     resolve_route_canceled: bool
 
-    def __init__(self, brain: Brain, team: str, short_team: str) -> None:
+    def __init__(self, brain: Brain, peripherals: Peripherals, team: str, short_team: str) -> None:
         self.brain = brain
+        self.peripherals = peripherals
+
         self.resolved_route = AUTONOMOUS_ROUTE
         self.was_touching = False
         self.resolve_route_canceled = False
+
+        self.motor_temp_widget = MotorTempWidget(
+            peripherals, x=0, y=BRAIN_HEIGHT_PX-BOTTOM_BAR_HEIGHT-30, width=80, height=30)
         self.status_bar = StatusBar(brain, team, short_team)
 
         self.touching = False
@@ -718,8 +839,13 @@ class UiHandler:
         self.touch_y = self.brain.screen.y_position()
 
         self.status_bar.update()
+        return self.motor_temp_widget.update(*self.touch_info())
 
-    def render(self):
+    def render(self, skip_image: bool = False, skip_temp_widget: bool = False):
+        if not skip_image:
+            self.brain.screen.draw_image_from_file("logo.bmp", 0, 0)
+        if not skip_temp_widget:
+            self.motor_temp_widget.render(self.brain.screen, self.theme)
         self.status_bar.render(self.brain.screen, self.theme)
 
     def touch_info(self) -> tuple[bool, bool, int, int]:
@@ -730,10 +856,11 @@ class UiHandler:
         self.status_bar.update_to_route_select()
         selector = AutonSelectorScreen(self.brain)
         while selector.resolved is None and not self.resolve_route_canceled:
-            selector.update(*self.touch_info())
-            self.update()
+            if not self.update():
+                # skip updating selector if we consumed the touch
+                selector.update(*self.touch_info())
             selector.render(self.brain.screen, self.theme)
-            self.render()
+            self.render(skip_image=True)
             self.brain.screen.render()
         self.brain.screen.clear_screen()
         self.brain.screen.render()
@@ -745,24 +872,31 @@ class UiHandler:
 
     @ui_crashpad("ui rendering")
     def route_ui(self, route: str) -> None:
+        self.motor_temp_widget.set_selected(False)
         self.status_bar.update_to_route(route)
         self.update()
-        self.render()
+        self.render(skip_temp_widget=True)
         self.brain.screen.render()
+        debug("rendered")
 
     @ui_crashpad("ui rendering")
     def opcontrol_ui(self) -> None:
+        self.motor_temp_widget.set_selected(False)
         self.status_bar.update_to_opcontrol()
         self.update()
         self.render()
         self.brain.screen.render()
 
     @ui_crashpad("ui rendering")
-    def waiting_ui(self) -> None:
+    def waiting_ui(self, do_loop=True) -> None:
         if self.resolved_route is None or self.resolved_route == "x":
             self.status_bar.update_to_waiting_no_route()
         else:
             self.status_bar.update_to_waiting(self.resolved_route)
-        self.update()
-        self.render()
-        self.brain.screen.render()
+        self.resolve_route_canceled = False
+        while True:
+            self.update()
+            self.render()
+            self.brain.screen.render()
+            if not do_loop or self.resolve_route_canceled:
+                break

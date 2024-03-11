@@ -5,7 +5,9 @@ class Peripherals:
     brain: Brain
     inertial: Inertial
     drivetrain: SmartDrive
+    left_motors_list: list[Motor]
     left_motors: MotorGroup
+    right_motors_list: list[Motor]
     right_motors: MotorGroup
     controller: Controller
     claw_piston: Pneumatics
@@ -31,18 +33,20 @@ class RealBotPeripherals(Peripherals):
 
         self.inertial = Inertial(Ports.PORT6)
 
-        self.left_motors = MotorGroup(
+        self.left_motors_list = [
             Motor(Ports.PORT20, False),
             Motor(Ports.PORT19, True),
             Motor(Ports.PORT9, False),
             Motor(Ports.PORT8, True),
-        )
-        self.right_motors = MotorGroup(
+        ]
+        self.left_motors = MotorGroup(*self.left_motors_list)
+        self.right_motors_list = [
             Motor(Ports.PORT12, True),
             Motor(Ports.PORT13, False),
             Motor(Ports.PORT1, True),
             Motor(Ports.PORT2, False),
-        )
+        ]
+        self.right_motors = MotorGroup(*self.right_motors_list)
         self.drivetrain = SmartDrive(
             self.left_motors,
             self.right_motors,
@@ -67,14 +71,16 @@ class TestBotPeripherals(Peripherals):
 
         self.inertial = Inertial(Ports.PORT5)
 
-        self.left_motors = MotorGroup(
+        self.left_motors_list = [
             Motor(Ports.PORT20),
             Motor(Ports.PORT19)
-        )
-        self.right_motors = MotorGroup(
+        ]
+        self.left_motors = MotorGroup(*self.left_motors_list)
+        self.right_motors_list = [
             Motor(Ports.PORT11, True),
             Motor(Ports.PORT1, True)
-        )
+        ]
+        self.right_motors = MotorGroup(*self.right_motors_list)
         self.drivetrain = SmartDrive(
             self.left_motors,
             self.right_motors,

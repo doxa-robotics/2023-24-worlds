@@ -14,20 +14,25 @@ if USE_REAL_BOT:
     peripherals = RealBotPeripherals()
 else:
     peripherals = TestBotPeripherals()
-ui_handler = UiHandler(peripherals.brain, "DOXA Robotics 99484", "99484")
+ui_handler = UiHandler(peripherals.brain, peripherals,
+                       "DOXA Robotics 99484", "99484")
 
 
 def autonomous():
     # this function is called as a thread so we have to make sure
     ui_handler.cancel_resolve_route()
     # wait a negligible amount so the main thread can realize it should stop
-    wait(10)
+    wait(50)
     ui_handler.route_ui(selected_autonomous)
     if selected_autonomous == "test":
         autonomous_test(peripherals)
 
 
 def driver():
+    # this function is called as a thread so we have to make sure
+    ui_handler.cancel_resolve_route()
+    # wait a negligible amount so the main thread can realize it should stop
+    wait(20)
     ui_handler.opcontrol_ui()
     while True:
         try:
@@ -45,5 +50,5 @@ if COMPETITION_MODE:
     debug("resolved autonomous route: {}".format(selected_autonomous))
     ui_handler.waiting_ui()
 else:
-    ui_handler.waiting_ui()
+    ui_handler.waiting_ui(do_loop=False)
     autonomous()
