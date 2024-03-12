@@ -1,10 +1,32 @@
+from typing import Self
 from vex import *
+
+from pid_drivetrain import PIDDrivetrain
+
+
+class PIDDrivetrainConfig:
+    # units are m/s or degrees unless otherwise specified
+    turning_p: float
+    turning_max_error: float
+
+    drive_p: float
+    drive_max_error: float
+
+    max_stop_velocity: float
+
+    def __init__(self, turning_p: float, turning_max_error: float, drive_p: float, drive_max_error: float,
+                 max_stop_velocity: float) -> None:
+        self.turning_p = turning_p
+        self.turning_max_error = turning_max_error
+        self.drive_p = drive_p
+        self.drive_max_error = drive_max_error
+        self.max_stop_velocity = max_stop_velocity
 
 
 class Peripherals:
     brain: Brain
     inertial: Inertial
-    drivetrain: SmartDrive
+    drivetrain: PIDDrivetrain
     left_motors_list: list[Motor]
     left_motors: MotorGroup
     right_motors_list: list[Motor]
@@ -16,6 +38,8 @@ class Peripherals:
 
     WHEEL_TRAVEL_MM: int
     WHEEL_TRACK_WIDTH_MM: int
+
+    pid_drivetrain_config: PIDDrivetrainConfig
 
 
 class RealBotPeripherals(Peripherals):
@@ -47,13 +71,18 @@ class RealBotPeripherals(Peripherals):
             Motor(Ports.PORT2, False),
         ]
         self.right_motors = MotorGroup(*self.right_motors_list)
-        self.drivetrain = SmartDrive(
-            self.left_motors,
-            self.right_motors,
-            self.inertial,
-            self.WHEEL_TRAVEL_MM,
-            self.WHEEL_TRACK_WIDTH_MM
+
+        self.pid_drivetrain_config = PIDDrivetrainConfig(
+            turning_p=0.008056,
+            turning_max_error=2.0,
+
+            drive_p=0.01,
+            drive_max_error=5,
+
+            max_stop_velocity=0.01
         )
+
+        self.drivetrain = PIDDrivetrain(self)
 
 
 class TestBotPeripherals(Peripherals):
@@ -81,10 +110,15 @@ class TestBotPeripherals(Peripherals):
             Motor(Ports.PORT1, True)
         ]
         self.right_motors = MotorGroup(*self.right_motors_list)
-        self.drivetrain = SmartDrive(
-            self.left_motors,
-            self.right_motors,
-            self.inertial,
-            self.WHEEL_TRAVEL_MM,
-            self.WHEEL_TRACK_WIDTH_MM
+
+        self.pid_drivetrain_config = PIDDrivetrainConfig(
+            turning_p=0.0085,
+            turning_max_error=2.0,
+
+            drive_p=0.0031,
+            drive_max_error=5,
+
+            max_stop_velocity=0.005
         )
+
+        self.drivetrain = PIDDrivetrain(self)

@@ -1,10 +1,12 @@
-from autonomous_common import turn_for, debug
+from autonomous_common import debug
 from peripherals import Peripherals
 from vex import *
 from random import random
 
+from pid_drivetrain import PIDDrivetrain
+
 
 def autonomous_test(p: Peripherals):
     while True:
-        turn_for(p, random()*360 - 180)
-        wait(500)
+        p.drivetrain.drive(1500)
+        p.drivetrain.turn(180)
