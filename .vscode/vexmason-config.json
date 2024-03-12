@@ -1,5 +1,5 @@
 {
-  "config_version": 1,
+  "config_version": "1.1",
   "name": "99484 2023-24 Worlds",
   "description": "Default autonomous route ID: {{ defines/__AUTONOMOUS_ROUTE__ }}",
   "language": "python",
