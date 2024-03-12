@@ -47,6 +47,8 @@ class PIDDrivetrain:
         return abs(heading)
 
     def drive(self, distance: int | float) -> float:
+        self.p.left_motors.reset_position()
+        self.p.right_motors.reset_position()
         value = (self.p.left_motors.position() +
                  self.p.right_motors.position()) / 2
         target_value = value + distance
