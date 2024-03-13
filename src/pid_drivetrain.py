@@ -15,9 +15,10 @@ class PIDDrivetrain:
     def turn(self, delta: int | float) -> float:
         """Turns the bot a specific amount of degrees (Relative)
 
-        `delta` is in degrees. This method may override the inertial's heading
-        to an unexpected value.
+        `delta` is in degrees.
         """
+        old_heading = self.p.inertial.heading()
+        self.p.inertial.set_heading(180)
         starting_real_heading = self.p.inertial.heading()
         heading_difference = starting_real_heading + float(delta)
         heading = starting_real_heading - heading_difference
@@ -44,6 +45,8 @@ class PIDDrivetrain:
                 heading_difference += 340 - 20
         self.p.left_motors.stop(BRAKE)
         self.p.right_motors.stop(BRAKE)
+        self.p.inertial.set_heading(
+            old_heading + delta + heading - heading_difference)
         return abs(heading)
 
     def drive(self, distance: int | float) -> float:
