@@ -75,9 +75,9 @@ def ui_show_error(context: str, err: Exception):
 
 def ui_crashpad(context: str):
     def decorator(fn: Callable):
-        def wrapper(*args):
+        def wrapper(*args, **kwargs):
             try:
-                fn(*args)
+                fn(*args, **kwargs)
             except Exception as err:
                 try:
                     ui_show_error(context, err)

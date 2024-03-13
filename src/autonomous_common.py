@@ -1,4 +1,3 @@
-from simple_pid import PID
 from vex import *
 from peripherals import Peripherals
 from sys import stderr

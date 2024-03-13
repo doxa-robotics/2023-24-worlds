@@ -1,7 +1,4 @@
-from typing import Self
 from vex import *
-
-from pid_drivetrain import PIDDrivetrain
 
 
 class PIDDrivetrainConfig:
@@ -26,7 +23,6 @@ class PIDDrivetrainConfig:
 class Peripherals:
     brain: Brain
     inertial: Inertial
-    drivetrain: PIDDrivetrain
     left_motors_list: list[Motor]
     left_motors: MotorGroup
     right_motors_list: list[Motor]
@@ -82,8 +78,6 @@ class RealBotPeripherals(Peripherals):
             max_stop_velocity=0.01
         )
 
-        self.drivetrain = PIDDrivetrain(self)
-
 
 class TestBotPeripherals(Peripherals):
     WHEEL_TRAVEL_MM = 320
@@ -120,5 +114,3 @@ class TestBotPeripherals(Peripherals):
 
             max_stop_velocity=0.005
         )
-
-        self.drivetrain = PIDDrivetrain(self)
