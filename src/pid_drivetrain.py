@@ -52,16 +52,16 @@ class PIDDrivetrain:
     def drive(self, distance: int | float) -> float:
         self.p.left_motors.reset_position()
         self.p.right_motors.reset_position()
-        value = (self.p.left_motors.position() +
-                 self.p.right_motors.position()) / 2
+        value = ((self.p.left_motors.position() +
+                 self.p.right_motors.position()) / 2) / 360 * self.p.WHEEL_TRAVEL_MM
         target_value = value + distance
         pid = PID(self.config.drive_p, 0, 0, setpoint=target_value,
                   time_fn=lambda: time_seconds(self.p))
         delta = target_value - value
         real_velocity = self.config.max_stop_velocity
         while abs(delta) >= self.config.drive_max_error or real_velocity >= self.config.max_stop_velocity:
-            value = (self.p.left_motors.position() +
-                     self.p.right_motors.position()) / 2
+            value = ((self.p.left_motors.position() +
+                     self.p.right_motors.position()) / 2) / 360 * self.p.WHEEL_TRAVEL_MM
             delta = target_value - value
             velocity_mps = pid(value)
             if velocity_mps == None:
