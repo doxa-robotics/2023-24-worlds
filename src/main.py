@@ -7,6 +7,7 @@ from driver_control import driver_control
 from peripherals import RealBotPeripherals, TestBotPeripherals
 from pid_drivetrain import PIDDrivetrain
 from ui import UiHandler, ui_show_error
+from routes import offense_1
 
 # default to AUTONOMOUS_ROUTE but allow selection
 selected_autonomous: str = AUTONOMOUS_ROUTE
@@ -28,6 +29,8 @@ def autonomous():
     ui_handler.route_ui(selected_autonomous)
     if selected_autonomous == "test":
         autonomous_test(peripherals, drivetrain)
+    elif selected_autonomous == "o1":
+        offense_1.offense_1()
 
 
 def driver():

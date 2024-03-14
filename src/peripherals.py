@@ -106,7 +106,7 @@ class TestBotPeripherals(Peripherals):
         self.right_motors = MotorGroup(*self.right_motors_list)
 
         self.pid_drivetrain_config = PIDDrivetrainConfig(
-            turning_p=0.0085,
+            turning_p=0.01,
             turning_max_error=2.0,
 
             drive_p=0.0031,
