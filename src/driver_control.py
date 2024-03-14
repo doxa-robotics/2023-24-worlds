@@ -1,6 +1,6 @@
 from vex import *
 
-from autonomous_common import debug
+from utils import debug
 from constants import TURNING_SPEED_FACTOR
 from peripherals import Peripherals
 from ultrasonic_claw import UltrasonicClaw
@@ -15,8 +15,8 @@ def _damp_controller(val):
 
 
 def driver_control(p: Peripherals):
-    last_a_pressing = False
-    last_b_pressing = False
+    last_wing_pressing = False
+    last_claw_pressing = False
     ultrasonic_claw = UltrasonicClaw(p.claw_piston, p.front_sonar)
     while True:
         # Spin the left and right groups based on the controller
@@ -39,21 +39,21 @@ def driver_control(p: Peripherals):
             axis3 - axis1*TURNING_SPEED_FACTOR,
             VelocityUnits.PERCENT)
 
-        a_pressing = p.controller.buttonA.pressing()
-        if a_pressing and not last_a_pressing:
+        wing_pressing = p.controller.buttonL1.pressing()
+        if wing_pressing and not last_wing_pressing:
             if p.wing_piston.value():
                 p.wing_piston.close()
             else:
                 p.wing_piston.open()
-        last_a_pressing = a_pressing
+        last_wing_pressing = wing_pressing
 
         ultrasonic_claw.update()
-        b_pressing = p.controller.buttonB.pressing()
-        if b_pressing and not last_b_pressing:
+        claw_pressing = p.controller.buttonR1.pressing()
+        if claw_pressing and not last_claw_pressing:
             if p.claw_piston.value():
                 ultrasonic_claw.close()
             else:
                 ultrasonic_claw.open()
-        last_b_pressing = b_pressing
+        last_claw_pressing = claw_pressing
 
         wait(20)

@@ -1,3 +1,7 @@
-from offense_1 import offense_1
+from _route import Route, EmptyRoute
+from o1 import O1Route
+from test import TestRoute
 
-__all__ = ["offense_1"]
+routes: list[type[Route]] = [O1Route, TestRoute, EmptyRoute]
+
+__all__ = ["Route", "routes"]

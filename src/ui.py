@@ -2,9 +2,10 @@ from math import floor
 
 from vex import *
 
-from autonomous_common import debug
+from utils import debug
 from constants import AUTONOMOUS_ROUTE
 from peripherals import Peripherals
+from routes import Route
 
 BRAIN_WIDTH_PX = 480
 BRAIN_HEIGHT_PX = 240
@@ -12,6 +13,7 @@ BRAIN_HEIGHT_PX = 240
 ROUTE_TYPE_TITLE_TEXT = "select route type"
 ROUTE_TITLE_TEXT = "select autonomous route"
 CONFIRM_TEXT = "selecting route '{}'"
+NO_ROUTE_TEXT = "No route"
 
 PADDING = 20
 TOP_PADDING = 32
@@ -26,28 +28,6 @@ ROUTE_HEIGHT = 50
 
 BUTTON_HEIGHT = 40
 BUTTON_WIDTH = 80
-
-# the first letters of the ID are important - they decide which subcategory
-# the route is
-AUTONOMOUS_ROUTE_NAMES = {
-    "o1": "(not completed)",
-    "o2": "(not completed)",
-    "o3": "(not completed)",
-    "o4": "(not completed)",
-    "o5": "(not completed)",
-    "o6": "(not completed)",
-
-    "d1": "(not completed)",
-    "d2": "(not completed)",
-    "d3": "(not completed)",
-    "d4": "(not completed)",
-    "d5": "(not completed)",
-    "d6": "(not completed)",
-
-    "test": "Test",
-
-    "x": "No route"
-}
 
 
 def ui_show_error(context: str, err: Exception):
@@ -419,8 +399,7 @@ class StatusBar:
         self.update()
 
     def update_to_route(self, route_id: str):
-        self.status_text = "running route {}".format(
-            AUTONOMOUS_ROUTE_NAMES[route_id])
+        self.status_text = "running route {}".format(route_id)
         self.update()
 
     def update_to_opcontrol(self):
@@ -576,8 +555,9 @@ class MotorTempWidget(GenericButton):
                 self.worst_right_motor_temp = temp
         consumed = super().update(touching, clicked, touch_x, touch_y)
         consumed = consumed or (
+            self.selected and
             self.x <= touch_x <= self.x + self.popup_width and
-            self.y - self.popup_height <= touch_y <= self.y
+            self.y + self.height <= touch_y <= self.y + self.height + self.popup_height
         )
         return consumed
 
@@ -615,7 +595,7 @@ class MotorTempWidget(GenericButton):
             screen.set_pen_width(0)
             screen.draw_rectangle(
                 x=self.x,
-                y=self.y - self.popup_height,
+                y=self.y + self.height,
                 width=self.popup_width,
                 height=self.popup_height
             )
@@ -625,26 +605,26 @@ class MotorTempWidget(GenericButton):
             screen.print_at(
                 text,
                 x=self.x+5,
-                y=self.y - self.popup_height + 15
+                y=self.y + self.height + 15
             )
             screen.set_font(FontType.MONO20)
             screen.print_at(
                 "{}C".format(self.worst_left_motor_temp),
                 x=self.x+5,
-                y=self.y - self.popup_height + 34
+                y=self.y + self.height + 34
             )
             screen.set_font(FontType.MONO12)
             text = "Right motors (max)"
             screen.print_at(
                 text,
                 x=self.x+5,
-                y=self.y - self.popup_height + 52
+                y=self.y + self.height + 52
             )
             screen.set_font(FontType.MONO20)
             screen.print_at(
                 "{}C".format(self.worst_right_motor_temp),
                 x=self.x+5,
-                y=self.y - self.popup_height + 71
+                y=self.y + self.height + 71
             )
 
 
@@ -652,6 +632,7 @@ class AutonSelectorScreen:
     route_type: str | None = None
 
     resolved: str | None = None
+    route_mapping: dict[str, list[type[Route]]]
 
     button_group: RouteButtonGroup
     next_button: NormalButton
@@ -659,20 +640,25 @@ class AutonSelectorScreen:
 
     brain: Brain
 
-    def __init__(self, brain: Brain) -> None:
+    def __init__(self, brain: Brain, routes: list[type[Route]]) -> None:
         self.brain = brain
+        self.route_mapping = {}
+        for route in routes:
+            category = route.category_name()
+            if self.route_mapping.get(category) is None:
+                self.route_mapping[category] = []
+            self.route_mapping[category].append(route)
         self.update_to_route_type_select()
 
     def update_to_route_type_select(self):
+        categories = []
+        i = 0
+        for category in self.route_mapping.keys():
+            categories.append(RouteButton.from_grid_position(
+                i % 3, floor(i / 3), category, category, ROUTE_TYPE_HEIGHT))
+            i += 1
         self.button_group = RouteButtonGroup(
-            RouteButton.from_grid_position(
-                0, 0, "Defense", "d", ROUTE_TYPE_HEIGHT),
-            RouteButton.from_grid_position(
-                1, 0, "Offense", "o", ROUTE_TYPE_HEIGHT),
-            RouteButton.from_grid_position(
-                2, 0, "No route!", "x", ROUTE_TYPE_HEIGHT),
-            RouteButton.from_grid_position(
-                0, 1, "Test route", "t", ROUTE_TYPE_HEIGHT)
+            *categories
         )
         self.back_button = None
         self.next_button = NormalButton(
@@ -687,21 +673,20 @@ class AutonSelectorScreen:
     def update_to_route_select(self):
         if self.route_type is None:
             raise Exception("invalid state")
-        routes = [route for route in AUTONOMOUS_ROUTE_NAMES.keys()
-                  if route.startswith(self.route_type)]
-        routes.sort(key=lambda id: AUTONOMOUS_ROUTE_NAMES[id])
+        routes = self.route_mapping[self.route_type]
+        routes.sort(key=lambda route: route.name())
 
         buttons = []
         # I would use enumerate but apparently the VEX V5 brain doesn't support
         # it, even though the MicroPython version info claims it supports up to
         # Python 3.5
         i = 0
-        for id in routes:
+        for route in routes:
             buttons.append(RouteButton.from_grid_position(
                 ix=i % 3,
                 iy=floor(i/3),
-                text=AUTONOMOUS_ROUTE_NAMES[id],
-                value=id
+                text=route.name(),
+                value=route.name()
             ))
             i += 1
         self.button_group = RouteButtonGroup(
@@ -801,6 +786,7 @@ class UiHandler:
     peripherals: Peripherals
 
     resolved_route: str
+    routes: list[type[Route]]
 
     was_touching: bool
 
@@ -816,7 +802,7 @@ class UiHandler:
 
     resolve_route_canceled: bool
 
-    def __init__(self, brain: Brain, peripherals: Peripherals, team: str, short_team: str) -> None:
+    def __init__(self, brain: Brain, peripherals: Peripherals, team: str, short_team: str, routes: list[type[Route]]) -> None:
         self.brain = brain
         self.peripherals = peripherals
 
@@ -825,13 +811,15 @@ class UiHandler:
         self.resolve_route_canceled = False
 
         self.motor_temp_widget = MotorTempWidget(
-            peripherals, x=0, y=BRAIN_HEIGHT_PX-BOTTOM_BAR_HEIGHT-30, width=80, height=30)
+            peripherals, x=0, y=0, width=80, height=30)
         self.status_bar = StatusBar(brain, team, short_team)
 
         self.touching = False
         self.clicked = False
         self.touch_x = -1
         self.touch_y = -1
+
+        self.routes = routes
 
         self.theme = UiTheme.theme_black()
 
@@ -857,7 +845,7 @@ class UiHandler:
     @ui_crashpad("ui rendering")
     def resolve_route(self) -> None:
         self.status_bar.update_to_route_select()
-        selector = AutonSelectorScreen(self.brain)
+        selector = AutonSelectorScreen(self.brain, self.routes)
         while selector.resolved is None and not self.resolve_route_canceled:
             if not self.update():
                 # skip updating selector if we consumed the touch
@@ -894,7 +882,7 @@ class UiHandler:
 
     @ui_crashpad("ui rendering")
     def waiting_ui(self, do_loop=True) -> None:
-        if self.resolved_route is None or self.resolved_route == "x":
+        if self.resolved_route is None or self.resolved_route == NO_ROUTE_TEXT:
             self.status_bar.update_to_waiting_no_route()
         else:
             self.status_bar.update_to_waiting(self.resolved_route)

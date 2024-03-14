@@ -1,13 +1,12 @@
 from vex import *
 
-from autonomous_common import debug
-from autonomous_test import autonomous_test
+from utils import debug, has_interaction
 from constants import AUTONOMOUS_ROUTE, COMPETITION_MODE, USE_REAL_BOT
 from driver_control import driver_control
 from peripherals import RealBotPeripherals, TestBotPeripherals
 from pid_drivetrain import PIDDrivetrain
 from ui import UiHandler, ui_show_error
-from routes import offense_1
+from routes import routes
 
 # default to AUTONOMOUS_ROUTE but allow selection
 selected_autonomous: str = AUTONOMOUS_ROUTE
@@ -18,7 +17,8 @@ else:
     peripherals = TestBotPeripherals()
 drivetrain = PIDDrivetrain(peripherals)
 ui_handler = UiHandler(peripherals.brain, peripherals,
-                       "DOXA Robotics 99484", "99484")
+                       "DOXA Robotics 99484", "99484",
+                       routes)
 
 
 def autonomous():
@@ -27,13 +27,18 @@ def autonomous():
     # wait a negligible amount so the main thread can realize it should stop
     wait(50)
     ui_handler.route_ui(selected_autonomous)
-    if selected_autonomous == "test":
-        autonomous_test(peripherals, drivetrain)
-    elif selected_autonomous == "o1":
-        offense_1.offense_1()
+    route = None
+    for possible_route in routes:
+        if possible_route.name() == selected_autonomous:
+            route = possible_route
+    if route is None:
+        raise Exception("undefined route! {}".format(route))
+    route.run(peripherals, drivetrain)
 
 
 def driver():
+    while not has_interaction(peripherals):
+        pass
     # this function is called as a thread so we have to make sure
     ui_handler.cancel_resolve_route()
     # wait a negligible amount so the main thread can realize it should stop

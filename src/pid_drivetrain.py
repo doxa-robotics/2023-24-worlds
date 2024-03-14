@@ -1,5 +1,5 @@
 from simple_pid import PID
-from autonomous_common import time_seconds
+from utils import time_seconds
 from peripherals import PIDDrivetrainConfig, Peripherals
 from vex import *
 
