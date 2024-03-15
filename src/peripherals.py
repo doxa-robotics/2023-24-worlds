@@ -46,8 +46,8 @@ class RealBotPeripherals(Peripherals):
         self.brain = Brain()
         self.controller = Controller()
 
-        self.wing_piston = Pneumatics(self.brain.three_wire_port.g)
-        self.claw_piston = Pneumatics(self.brain.three_wire_port.h)
+        self.wing_piston = Pneumatics(self.brain.three_wire_port.h)
+        self.claw_piston = Pneumatics(self.brain.three_wire_port.g)
 
         self.front_sonar = Sonar(self.brain.three_wire_port.c)
 
