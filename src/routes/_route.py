@@ -1,5 +1,7 @@
-# from peripherals import Peripherals
-# from pid_drivetrain import PIDDrivetrain
+__COMPILED__ = False
+if not __COMPILED__:
+    from peripherals import Peripherals
+    from pid_drivetrain import PIDDrivetrain
 
 
 class Route():
@@ -12,8 +14,7 @@ class Route():
         ...
 
     @staticmethod
-    # TODO: type these as Peripherals and Drivetrain
-    def run(p, d) -> None:
+    def run(p: "Peripherals", d: "PIDDrivetrain") -> None:
         ...
 
 
