@@ -1,7 +1,9 @@
 __COMPILED__ = False
 if not __COMPILED__:
-    from peripherals import Peripherals
-    from pid_drivetrain import PIDDrivetrain
+    from typing import TYPE_CHECKING
+    if TYPE_CHECKING:
+        from peripherals import Peripherals
+        from pid_drivetrain import PIDDrivetrain
 
 
 class Route():
