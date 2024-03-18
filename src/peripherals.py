@@ -6,18 +6,21 @@ class PIDDrivetrainConfig:
     turning_p: float
     turning_max_error: float
 
+    gyro_reversed: bool
+
     drive_p: float
     drive_max_error: float
 
     max_stop_velocity: float
 
     def __init__(self, turning_p: float, turning_max_error: float, drive_p: float, drive_max_error: float,
-                 max_stop_velocity: float) -> None:
+                 max_stop_velocity: float, gyro_reversed: bool) -> None:
         self.turning_p = turning_p
         self.turning_max_error = turning_max_error
         self.drive_p = drive_p
         self.drive_max_error = drive_max_error
         self.max_stop_velocity = max_stop_velocity
+        self.gyro_reversed = gyro_reversed
 
 
 class Peripherals:
@@ -51,7 +54,7 @@ class RealBotPeripherals(Peripherals):
 
         self.front_sonar = Sonar(self.brain.three_wire_port.c)
 
-        self.inertial = Inertial(Ports.PORT6)
+        self.inertial = Inertial(Ports.PORT18)
 
         self.left_motors_list = [
             Motor(Ports.PORT20, False),
@@ -69,13 +72,15 @@ class RealBotPeripherals(Peripherals):
         self.right_motors = MotorGroup(*self.right_motors_list)
 
         self.pid_drivetrain_config = PIDDrivetrainConfig(
-            turning_p=0.008056,
+            turning_p=0.008,
             turning_max_error=2.0,
 
             drive_p=0.01,
             drive_max_error=5,
 
-            max_stop_velocity=0.01
+            max_stop_velocity=0.01,
+
+            gyro_reversed=True
         )
 
 
@@ -112,5 +117,7 @@ class TestBotPeripherals(Peripherals):
             drive_p=0.0031,
             drive_max_error=5,
 
-            max_stop_velocity=0.005
+            max_stop_velocity=0.005,
+
+            gyro_reversed=False
         )
