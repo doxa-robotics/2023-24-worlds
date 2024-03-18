@@ -1,4 +1,5 @@
 from _route import TestRoute as TestRouteCategory
+from vex import wait
 
 
 class TestRoute(TestRouteCategory):
@@ -9,5 +10,5 @@ class TestRoute(TestRouteCategory):
     @staticmethod
     def run(p, d):
         while True:
-            d.drive(1000)
-            d.turn(180)
+            d.turn(90)
+            wait(500)
