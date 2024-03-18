@@ -3,7 +3,7 @@ from vex import *
 from utils import debug, has_interaction
 from constants import AUTONOMOUS_ROUTE, COMPETITION_MODE, USE_REAL_BOT
 from driver_control import driver_control
-from peripherals import RealBotPeripherals, TestBotPeripherals
+from peripherals import Peripherals, RealBotPeripherals, TestBotPeripherals
 from pid_drivetrain import PIDDrivetrain
 from ui import UiHandler, ui_show_error
 from routes import routes
@@ -11,6 +11,7 @@ from routes import routes
 # default to AUTONOMOUS_ROUTE but allow selection
 selected_autonomous: str = AUTONOMOUS_ROUTE
 
+peripherals: Peripherals
 if USE_REAL_BOT:
     peripherals = RealBotPeripherals()
 else:
