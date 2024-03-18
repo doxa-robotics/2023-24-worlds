@@ -1,5 +1,5 @@
 from simple_pid import PID
-from utils import time_seconds
+from utils import debug, time_seconds
 from peripherals import PIDDrivetrainConfig, Peripherals
 from vex import *
 
@@ -17,9 +17,15 @@ class PIDDrivetrain:
 
         `delta` is in degrees.
         """
-        old_heading = self.p.inertial.heading()
+        def get_heading():
+            if self.config.gyro_reversed:
+                return 360 - self.p.inertial.heading()
+            else:
+                return self.p.inertial.heading()
+
+        old_heading = get_heading()
         self.p.inertial.set_heading(180)
-        starting_real_heading = self.p.inertial.heading()
+        starting_real_heading = get_heading()
         heading_difference = starting_real_heading + float(delta)
         heading = starting_real_heading - heading_difference
         pid = PID(self.config.turning_p, 0, 0,
@@ -35,14 +41,15 @@ class PIDDrivetrain:
             self.p.right_motors.spin(REVERSE, velocity_rpm, units=RPM)
             real_velocity = (self.p.left_motors.velocity() *
                              60) / (self.p.WHEEL_TRAVEL_MM / 1000)
-            real_heading = self.p.inertial.heading()
+            real_heading = get_heading()
             heading = real_heading - heading_difference
-            if real_heading > 340:
-                self.p.inertial.set_heading(20)
-                heading_difference -= 340 - 20
-            elif real_heading < 20:
-                self.p.inertial.set_heading(340)
-                heading_difference += 340 - 20
+            margin = 80
+            if real_heading > 360 - margin:
+                self.p.inertial.set_heading(margin)
+                heading_difference -= 360 - margin
+            elif real_heading < margin:
+                self.p.inertial.set_heading(360 - margin)
+                heading_difference += 360 - margin
         self.p.left_motors.stop(BRAKE)
         self.p.right_motors.stop(BRAKE)
         self.p.inertial.set_heading(
