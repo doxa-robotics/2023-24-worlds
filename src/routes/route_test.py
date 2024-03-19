@@ -9,6 +9,4 @@ class TestRoute(TestRouteCategory):
 
     @staticmethod
     def run(p, d):
-        while True:
-            d.turn(90)
-            wait(500)
+        d.drive(490)

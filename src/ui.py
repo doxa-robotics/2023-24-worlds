@@ -2,10 +2,10 @@ from math import floor
 
 from vex import *
 
-from utils import debug
 from constants import AUTONOMOUS_ROUTE
 from peripherals import Peripherals
 from routes import Route
+from utils import Logger
 
 BRAIN_WIDTH_PX = 480
 BRAIN_HEIGHT_PX = 240
@@ -37,7 +37,7 @@ def ui_show_error(context: str, err: Exception):
     screen.set_pen_color(0xffffff)
     screen.set_font(FontType.MONO20)
     err_text = repr(err)
-    debug("error:\n{}".format(err_text))
+    Logger.debug("error!:\n{}".format(err_text))
     text = "error during {}\n  (using route {} if not set):\n\n{}".format(
         context,
         AUTONOMOUS_ROUTE,
@@ -842,6 +842,7 @@ class UiHandler:
     def touch_info(self) -> tuple[bool, bool, int, int]:
         return (self.touching, self.clicked, self.touch_x, self.touch_y)
 
+    @Logger.logger_context("UiHandler.resolve_route")
     @ui_crashpad("ui rendering")
     def resolve_route(self) -> None:
         self.status_bar.update_to_route_select()
@@ -853,6 +854,7 @@ class UiHandler:
             selector.render(self.brain.screen, self.theme)
             self.render(skip_image=True)
             self.brain.screen.render()
+        Logger.debug("finished resolution, clearing screen")
         self.brain.screen.clear_screen()
         self.brain.screen.render()
         if selector.resolved is not None:
@@ -861,6 +863,7 @@ class UiHandler:
     def cancel_resolve_route(self) -> None:
         self.resolve_route_canceled = True
 
+    @Logger.logger_context("UiHandler.route_ui")
     @ui_crashpad("ui rendering")
     def route_ui(self, route: str) -> None:
         self.motor_temp_widget.set_selected(False)
@@ -869,7 +872,7 @@ class UiHandler:
         self.update()
         self.render()
         self.brain.screen.render()
-        debug("rendered")
+        Logger.debug("rendered route UI")
 
     @ui_crashpad("ui rendering")
     def opcontrol_ui(self) -> None:
@@ -880,6 +883,7 @@ class UiHandler:
         self.render()
         self.brain.screen.render()
 
+    @Logger.logger_context("UiHandler.waiting_ui")
     @ui_crashpad("ui rendering")
     def waiting_ui(self, do_loop=True) -> None:
         if self.resolved_route is None or self.resolved_route == NO_ROUTE_TEXT:
@@ -892,3 +896,4 @@ class UiHandler:
             self.brain.screen.render()
             if not do_loop or self.resolve_route_canceled:
                 break
+        Logger.debug("waiting done")

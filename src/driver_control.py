@@ -1,6 +1,5 @@
 from vex import *
 
-from utils import debug
 from constants import TURNING_SPEED_FACTOR
 from peripherals import Peripherals
 from ultrasonic_claw import UltrasonicClaw

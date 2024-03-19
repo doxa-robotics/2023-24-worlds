@@ -1,6 +1,6 @@
 from vex import *
 
-from utils import debug, has_interaction
+from utils import Logger, has_interaction
 from constants import AUTONOMOUS_ROUTE, COMPETITION_MODE, USE_REAL_BOT
 from driver_control import driver_control
 from peripherals import Peripherals, RealBotPeripherals, TestBotPeripherals
@@ -22,11 +22,12 @@ ui_handler = UiHandler(peripherals.brain, peripherals,
                        routes)
 
 
+@Logger.logger_context("autonomous")
 def autonomous():
     # this function is called as a thread so we have to make sure
     ui_handler.cancel_resolve_route()
     # wait a negligible amount so the main thread can realize it should stop
-    wait(50)
+    wait(150)
     ui_handler.route_ui(selected_autonomous)
     route = None
     for possible_route in routes:
@@ -37,6 +38,7 @@ def autonomous():
     route.run(peripherals, drivetrain)
 
 
+@Logger.logger_context("opcontrol")
 def driver():
     while not has_interaction(peripherals):
         pass
@@ -49,6 +51,7 @@ def driver():
         try:
             driver_control(peripherals)
         except Exception as err:
+            Logger.debug(repr(err))
             ui_show_error("driver control", err)
 
 
@@ -58,7 +61,7 @@ if COMPETITION_MODE:
 
     ui_handler.resolve_route()
     selected_autonomous = ui_handler.resolved_route
-    debug("resolved autonomous route: {}".format(selected_autonomous))
+    Logger.debug("resolved autonomous route: {}".format(selected_autonomous))
     ui_handler.waiting_ui()
 else:
     ui_handler.waiting_ui(do_loop=False)

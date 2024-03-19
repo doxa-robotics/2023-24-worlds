@@ -29,5 +29,27 @@ def time_seconds(p: Peripherals):
     return p.brain.timer.system() / 1000
 
 
-def debug(content: str):
-    print(content, file=stderr)
+class BaseLogger:
+    indentation: int
+
+    def __init__(self) -> None:
+        self.indentation = 0
+
+    def debug(self, content: str):
+        self.print("{}{}".format("  " * self.indentation, content))
+
+    def print(self, content: str):
+        print(content, file=stderr)
+
+    def logger_context(self, context: str):
+        def decorator(fn: Callable):
+            def wrapper(*args, **kwargs):
+                self.debug("[{}]".format(context))
+                self.indentation += 1
+                fn(*args, **kwargs)
+                self.indentation -= 1
+            return wrapper
+        return decorator
+
+
+Logger = BaseLogger()

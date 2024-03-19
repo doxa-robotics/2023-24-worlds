@@ -42,7 +42,7 @@ class Peripherals:
 
 
 class RealBotPeripherals(Peripherals):
-    WHEEL_TRAVEL_MM = 460
+    WHEEL_TRAVEL_MM = 565
     WHEEL_TRACK_WIDTH_MM = 305
 
     def __init__(self) -> None:
@@ -51,10 +51,11 @@ class RealBotPeripherals(Peripherals):
 
         self.wing_piston = Pneumatics(self.brain.three_wire_port.h)
         self.claw_piston = Pneumatics(self.brain.three_wire_port.g)
+        self.claw_piston.open()
 
         self.front_sonar = Sonar(self.brain.three_wire_port.c)
 
-        self.inertial = Inertial(Ports.PORT18)
+        self.inertial = Inertial(Ports.PORT6)
 
         self.left_motors_list = [
             Motor(Ports.PORT20, False),
@@ -72,15 +73,17 @@ class RealBotPeripherals(Peripherals):
         self.right_motors = MotorGroup(*self.right_motors_list)
 
         self.pid_drivetrain_config = PIDDrivetrainConfig(
-            turning_p=0.008,
-            turning_max_error=2.0,
+            # turning_p=0.95,
+            turning_p=0.7,
+            turning_max_error=1.5,
 
-            drive_p=0.01,
+            drive_p=0.45,
+            # drive_p=0.25,
             drive_max_error=5,
 
             max_stop_velocity=0.01,
 
-            gyro_reversed=True
+            gyro_reversed=False
         )
 
 
@@ -94,6 +97,7 @@ class TestBotPeripherals(Peripherals):
 
         self.wing_piston = Pneumatics(self.brain.three_wire_port.f)
         self.claw_piston = Pneumatics(self.brain.three_wire_port.a)
+        self.claw_piston.open()
 
         self.front_sonar = Sonar(self.brain.three_wire_port.c)
 
