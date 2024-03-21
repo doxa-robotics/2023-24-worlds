@@ -16,7 +16,7 @@ class O2Route(OffenseRoute):
         p.wing_piston.open()
         d.drive(400)
         p.wing_piston.close()
-        d.drive(750)
+        d.drive(700)
         d.turn(-30)
         d.drive(840)
 
