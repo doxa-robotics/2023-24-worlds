@@ -14,6 +14,19 @@ class PIDDrivetrain:
         self.p = p
         self.config = p.pid_drivetrain_config
 
+    @Logger.logger_context("PIDDrivetrain.turn_to")
+    def turn_to(self, target_heading: int | float) -> float:
+        Logger.debug("turning to abs {}deg".format(target_heading))
+
+        def get_heading():
+            if self.config.gyro_reversed:
+                return 360 - self.p.inertial.heading()
+            else:
+                return self.p.inertial.heading()
+        heading = get_heading()
+        delta = ((target_heading - heading + 180) % 360) - 180
+        return self.turn(delta)
+
     @Logger.logger_context("PIDDrivetrain.turn")
     def turn(self, target_heading_delta: int | float) -> float:
         """Turns the bot a specific amount of degrees (relative), version 2
@@ -21,7 +34,7 @@ class PIDDrivetrain:
         `delta` is in degrees. May change the value of the inertial's heading.
         """
         start_time = time_seconds(self.p)
-        Logger.debug("turning {}deg".format(target_heading_delta))
+        Logger.debug("turning by {}deg".format(target_heading_delta))
 
         def get_heading():
             if self.config.gyro_reversed:
