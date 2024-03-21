@@ -12,15 +12,19 @@ class PIDDrivetrainConfig:
     drive_max_error: float
 
     max_stop_velocity: float
+    timeout_velocity: float
+    timeout: float
 
     def __init__(self, turning_p: float, turning_max_error: float, drive_p: float, drive_max_error: float,
-                 max_stop_velocity: float, gyro_reversed: bool) -> None:
+                 max_stop_velocity: float, gyro_reversed: bool, timeout: float, timeout_velocity: float) -> None:
         self.turning_p = turning_p
         self.turning_max_error = turning_max_error
         self.drive_p = drive_p
         self.drive_max_error = drive_max_error
         self.max_stop_velocity = max_stop_velocity
         self.gyro_reversed = gyro_reversed
+        self.timeout = timeout
+        self.timeout_velocity = timeout_velocity
 
 
 class Peripherals:
@@ -45,7 +49,7 @@ class RealBotPeripherals(Peripherals):
     WHEEL_TRAVEL_MM = 565
     WHEEL_TRACK_WIDTH_MM = 305
 
-    def __init__(self) -> None:
+    def __init__(self, full_speed_pid: bool = True) -> None:
         self.brain = Brain()
         self.controller = Controller()
 
@@ -73,17 +77,17 @@ class RealBotPeripherals(Peripherals):
         self.right_motors = MotorGroup(*self.right_motors_list)
 
         self.pid_drivetrain_config = PIDDrivetrainConfig(
-            # turning_p=0.95,
-            turning_p=0.7,
+            turning_p=0.95 if full_speed_pid else 0.4,
             turning_max_error=1.5,
 
-            drive_p=0.45,
-            # drive_p=0.25,
+            drive_p=0.45 if full_speed_pid else 0.2,
             drive_max_error=5,
 
             max_stop_velocity=0.01,
 
-            gyro_reversed=False
+            gyro_reversed=False,
+            timeout=0.5,
+            timeout_velocity=5.0
         )
 
 
@@ -123,5 +127,7 @@ class TestBotPeripherals(Peripherals):
 
             max_stop_velocity=0.005,
 
-            gyro_reversed=False
+            gyro_reversed=False,
+            timeout=0.5,
+            timeout_velocity=5.0
         )

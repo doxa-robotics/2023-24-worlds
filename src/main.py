@@ -1,7 +1,7 @@
 from vex import *
 
 from utils import Logger, has_interaction
-from constants import AUTONOMOUS_ROUTE, COMPETITION_MODE, USE_REAL_BOT
+from constants import AUTONOMOUS_ROUTE, COMPETITION_MODE, FULL_SPEED_PID, USE_REAL_BOT
 from driver_control import driver_control
 from peripherals import Peripherals, RealBotPeripherals, TestBotPeripherals
 from pid_drivetrain import PIDDrivetrain
@@ -13,7 +13,7 @@ selected_autonomous: str = AUTONOMOUS_ROUTE
 
 peripherals: Peripherals
 if USE_REAL_BOT:
-    peripherals = RealBotPeripherals()
+    peripherals = RealBotPeripherals(FULL_SPEED_PID)
 else:
     peripherals = TestBotPeripherals()
 drivetrain = PIDDrivetrain(peripherals)
