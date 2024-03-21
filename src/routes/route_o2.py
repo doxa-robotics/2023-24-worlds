@@ -14,9 +14,9 @@ class O2Route(OffenseRoute):
     def run(p, d):
         p.claw_piston.open()
         p.wing_piston.open()
-        d.drive(50)
+        d.drive(400)
         p.wing_piston.close()
-        d.drive(790)
+        d.drive(750)
         d.turn(-30)
         d.drive(840)
 
