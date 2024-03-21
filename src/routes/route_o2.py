@@ -13,8 +13,10 @@ class O2Route(OffenseRoute):
     @staticmethod
     def run(p, d):
         p.claw_piston.open()
-
-        d.drive(840)
+        p.wing_piston.open()
+        d.drive(50)
+        p.wing_piston.close()
+        d.drive(790)
         d.turn(-30)
         d.drive(840)
 
