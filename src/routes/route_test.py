@@ -9,4 +9,4 @@ class TestRoute(TestRouteCategory):
 
     @staticmethod
     def run(p, d):
-        d.drive(490)
+        d.drive(300)

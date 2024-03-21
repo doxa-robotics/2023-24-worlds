@@ -6,7 +6,8 @@
   "default_defines": {
     "__COMPETITION_MODE__": true,
     "__USE_REAL_BOT__": true,
-    "__AUTONOMOUS_ROUTE__": "x",
-    "__TURNING_SPEED_FACTOR__": 0.5
+    "__AUTONOMOUS_ROUTE__": "No route",
+    "__TURNING_SPEED_FACTOR__": 0.5,
+    "__FULL_SPEED_PID__": true
   }
 }

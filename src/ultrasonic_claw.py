@@ -1,5 +1,6 @@
 from vex import *
 from threshold import Threshold
+from utils import Logger
 
 
 class UltrasonicClaw:
@@ -14,11 +15,12 @@ class UltrasonicClaw:
         self.ultrasonic = ultrasonic
         self._can_close = True
         self._close_threshold = Threshold(120, False, True)
-        self._can_close_threshold = Threshold(350, True, False)
+        self._can_close_threshold = Threshold(400, True, False)
 
     def update(self):
         distance = self.ultrasonic.distance(MM)
-        if self._close_threshold.update(distance):
+        if self._close_threshold.update(distance) and self._can_close:
+            self._can_close = False
             self.pneumatic.close()
         if self._can_close_threshold.update(distance):
             self._can_close = True
