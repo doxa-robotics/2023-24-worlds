@@ -13,41 +13,45 @@ class O2Route(OffenseRoute):
     @staticmethod
     def run(p, d):
         p.claw_piston.open()
-        d.drive(168)
+
+        while d.drive(1680):
+            d.drive.turn(-30)
+
         p.claw_piston.close()
         p.wing_piston.close()
-        d.drive(-100)
+        d.drive(-1000)
         d.turn(90)
         p.claw_piston.open()
         d.turn(170)
-        d.drive(60)
+        d.drive(600)
         d.turn(48)
-        d.drive(80)
+        d.drive(800)
         p.claw_piston.close()
-        d.drive(-110)
+        d.drive(-1100)
         d.turn(50)
         p.wing_piston.open()
-        d.drive(50)
+        d.drive(500)
         d.turn(45)
-        d.drive(66)
+        d.drive(660)
         p.wing_piston.close()
-        d.drive(66)
+        d.drive(660)
         d.turn(180)
-        d.drive(10)
-        d.drive(-10)
+        d.drive(100)
+        d.drive(-100)
 
         while d.turn(90):
             p.claw_piston.open()
 
-        d.drive(168)
+        d.drive(1680)
 
         p.claw_piston.close()
-        d.turn(100)
-        d.drive(100)
+        d.turn(1000)
+        d.drive(1000)
         d.turn(38)
-        d.drive(100)
+        d.drive(1000)
 
         d.turn(148)
-        while d.drive(100):
+
+        while d.drive(1000):
             p.wing_piston.open()
             p.claw_piston.open()
