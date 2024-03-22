@@ -26,6 +26,7 @@ class O2Route(OffenseRoute):
         d.turn(90)
         p.claw_piston.open()
         d.turn(170)
+        # Go get the ball under the bar
         d.drive(600)
         d.turn(48)
         d.drive(800)
