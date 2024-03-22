@@ -62,7 +62,7 @@ class RealBotPeripherals(Peripherals):
         self.claw_piston = Pneumatics(self.brain.three_wire_port.g)
         self.claw_piston.open()
 
-        self.front_sonar = Sonar(self.brain.three_wire_port.c)
+        self.front_sonar = Sonar(self.brain.three_wire_port.a)
 
         self.inertial = Inertial(Ports.PORT6)
 
