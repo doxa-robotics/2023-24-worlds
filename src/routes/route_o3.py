@@ -10,7 +10,8 @@ class O3Route(OffenseRoute):
 
     @staticmethod
     def run(p, d):
-        p.inertial.set_heading(135)
+        p.inertial.set_heading(225)
+        d.turn_to(230)
         d.drive(1600)
         # rush
         p.claw_piston.close()
