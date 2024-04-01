@@ -7,11 +7,13 @@ from route_d3 import D3Route
 from route_o1 import O1Route
 from route_o2 import O2Route
 from route_o3 import O3Route
+from route_o4 import O4Route
 
 routes: list[type[Route]] = [
     O1Route,
     O2Route,
     O3Route,
+    O4Route,
     D1Route,
     D2Route,
     D3Route,
