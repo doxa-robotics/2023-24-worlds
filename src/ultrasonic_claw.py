@@ -14,7 +14,7 @@ class UltrasonicClaw:
         self.pneumatic = pneumatic
         self.ultrasonic = ultrasonic
         self._can_close = True
-        self._close_threshold = Threshold(120, False, True)
+        self._close_threshold = Threshold(100, False, True)
         self._can_close_threshold = Threshold(400, True, False)
 
     def update(self):
