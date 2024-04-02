@@ -8,6 +8,8 @@ from pid_drivetrain import PIDDrivetrain
 from ui import UiHandler, ui_show_error
 from routes import routes
 
+wait(200)  # let gyro and stuff warm up
+
 # default to AUTONOMOUS_ROUTE but allow selection
 selected_autonomous: str = AUTONOMOUS_ROUTE
 
