@@ -5,7 +5,7 @@ class D4Route(DefenseRoute):
     """ Start facing goal, middle of the mat between the corner and the elevation bar """
     @staticmethod
     def name():
-        return ""
+        return "Defense 4"
 
     @staticmethod
     def run(p, d):
