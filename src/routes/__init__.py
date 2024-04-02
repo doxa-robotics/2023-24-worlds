@@ -8,12 +8,14 @@ from route_o1 import O1Route
 from route_o2 import O2Route
 from route_o3 import O3Route
 from route_o4 import O4Route
+from route_o5 import O5Route
 
 routes: list[type[Route]] = [
     O1Route,
     O2Route,
     O3Route,
     O4Route,
+    O5Route,
     D1Route,
     D2Route,
     D3Route,
