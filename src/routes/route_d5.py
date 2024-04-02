@@ -1,14 +1,15 @@
-from _route import OffenseRoute
+from _route import DefenseRoute
 from vex import wait
 
 
-class TestRoute(OffenseRoute):
+class D5Route(DefenseRoute):
     @staticmethod
     def name():
-        return ""
+        return "Defense 5"
 
 
 # Start on the far corner if the triangle, facing the wall/goal.
+
 
     @staticmethod
     def run(p, d):
@@ -22,5 +23,3 @@ class TestRoute(OffenseRoute):
         d.turn(-120)
         p.wing_piston.open()
         d.drive(600)
-
-       
