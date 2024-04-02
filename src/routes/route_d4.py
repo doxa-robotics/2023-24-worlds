@@ -7,6 +7,9 @@ class TestRoute(OffenseRoute):
     def name():
         return ""
 
+
+# Start facing goal, middle of the mat between the corner and the elevation bar
+
     @staticmethod
     def run(p, d):
         p.claw_piston.open()
@@ -20,17 +23,4 @@ class TestRoute(OffenseRoute):
         d.drive(700)
         d.turn(120)
         d.drive(500)
-
-
-
-
-
-
-
-
-
-
-        d.drive(700)
-        d.turn(-30)
-        d.drive(840)
-        
+       
