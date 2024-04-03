@@ -39,7 +39,7 @@ class O5Route(OffenseRoute):
         # deposit the captured triball
         p.wing_piston.close()
         d.drive(300)
-        d.turn(180)
+        d.turn_to(0)
         p.claw_piston.open()
         d.drive(500)
 

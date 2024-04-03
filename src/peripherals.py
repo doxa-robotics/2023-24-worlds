@@ -82,10 +82,10 @@ class RealBotPeripherals(Peripherals):
         self.right_motors = MotorGroup(*self.right_motors_list)
 
         self.pid_drivetrain_config = PIDDrivetrainConfig(
-            turning_p=1.3 if full_speed_pid else 0.4,
+            turning_p=0.9 if full_speed_pid else 0.4,
             turning_max_error=1.5,
 
-            drive_p=1.0 if full_speed_pid else 0.2,
+            drive_p=0.52 if full_speed_pid else 0.2,
             drive_i=0.0,
             drive_d=-30.0,
             drive_max_error=5,

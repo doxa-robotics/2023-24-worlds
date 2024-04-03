@@ -37,7 +37,9 @@ def autonomous():
             route = possible_route
     if route is None:
         raise Exception("undefined route! {}".format(route))
+    ui_handler.start_timer()
     route.run(peripherals, drivetrain)
+    ui_handler.show_timer()
 
 
 @Logger.logger_context("opcontrol")
