@@ -22,15 +22,16 @@ class O5Route(OffenseRoute):
         d.drive(-400)
         d.turn_to(100)
         p.wing_piston.close()
-        d.drive(-1200)  # back into the goal
+        d.drive(-1000)  # back into the goal
         p.wing_piston.close()
         p.claw_piston.open()  # open the claw
         d.turn_to(360 - 20)  # prepare to back out
 
         # back out of the goal and get the center and bar-center triballs
         d.drive(-900)
-        d.turn_to(215)  # turn around and approach at an angle
-        d.drive(530)
+        d.turn_to(223)  # turn around and approach at an angle
+        d.drive(270)
+        d.drive(40)  # on purpose to slow down
         p.claw_piston.close()
         d.turn_to(170)
         p.wing_piston.open()
@@ -38,16 +39,28 @@ class O5Route(OffenseRoute):
 
         # deposit the captured triball
         p.wing_piston.close()
-        d.drive(300)
+        d.drive(200)
         d.turn_to(0)
         p.claw_piston.open()
-        d.drive(500)
+        d.drive(300)
 
-        return
-        d.turn_to(180 - 15)  # spin around to intake
-        d.drive(500)
+        d.turn_to(180 - 24)  # spin around to intake
+        d.drive(960)
+        d.drive(30)
         p.claw_piston.close()
-        d.turn_to(360 - 15)
-        d.drive(1000)
+        # p.wait(400)
+        d.turn_to(360 - 24)
+        d.drive(900)
         p.claw_piston.open()
-        d.drive(-200)
+
+        # back out of the goal and touch the bar
+        # change of plans: just touch the bar by ramming the barrier
+        # d.drive(-300)
+        # d.turn_to(90)
+        # d.drive(1050)
+        # d.turn_to(0)
+        # d.drive(-700)
+        d.drive(-1100)
+        d.turn_to(270)
+        d.drive(-500)
+        p.wing_piston.open()
