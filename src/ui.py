@@ -374,6 +374,8 @@ class StatusBar:
     last_has_sdcard: bool
     has_sdcard: bool
 
+    is_calibrating: bool = False
+
     def __init__(self, brain: Brain, team: str, short_team: str) -> None:
         self.team = team
         self.short_team = short_team
@@ -391,6 +393,8 @@ class StatusBar:
         self.has_sdcard = self.brain.sdcard.is_inserted()
         if len(self.status_text) > 0:
             self.text = "{} - {}".format(self.short_team, self.status_text)
+        elif self.is_calibrating:
+            self.text = "calibrating, please don't move"
         else:
             self.text = self.team
 
@@ -851,6 +855,7 @@ class UiHandler:
             if not self.update():
                 # skip updating selector if we consumed the touch
                 selector.update(*self.touch_info())
+            self.status_bar.is_calibrating = self.peripherals.inertial.is_calibrating()
             selector.render(self.brain.screen, self.theme)
             self.render(skip_image=True)
             self.brain.screen.render()

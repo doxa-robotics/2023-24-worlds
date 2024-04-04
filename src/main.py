@@ -30,6 +30,8 @@ def autonomous():
     ui_handler.cancel_resolve_route()
     # wait a negligible amount so the main thread can realize it should stop
     wait(150)
+    while peripherals.inertial.is_calibrating():
+        pass
     ui_handler.route_ui(selected_autonomous)
     route = None
     for possible_route in routes:
@@ -62,6 +64,8 @@ def driver():
 if COMPETITION_MODE:
     # initialize the competition first so it works if route resolution fails
     Competition(driver, autonomous)
+    # calibrate the inertial for use in auton
+    peripherals.inertial.calibrate()
 
     ui_handler.resolve_route()
     selected_autonomous = ui_handler.resolved_route
