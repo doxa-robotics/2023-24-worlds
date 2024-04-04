@@ -49,6 +49,9 @@ class Peripherals:
 
     pid_drivetrain_config: PIDDrivetrainConfig
 
+    def wait(self, ms: int):
+        wait(ms)
+
 
 class RealBotPeripherals(Peripherals):
     WHEEL_TRAVEL_MM = 565
@@ -83,7 +86,7 @@ class RealBotPeripherals(Peripherals):
 
         self.pid_drivetrain_config = PIDDrivetrainConfig(
             turning_p=0.9 if full_speed_pid else 0.4,
-            turning_max_error=1.5,
+            turning_max_error=3,
 
             drive_p=0.52 if full_speed_pid else 0.2,
             drive_i=0.0,

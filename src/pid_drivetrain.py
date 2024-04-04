@@ -89,14 +89,14 @@ class PIDDrivetrain:
         return abs(heading)
 
     @Logger.logger_context("PIDDrivetrain.drive")
-    def drive(self, target_distance_delta: int | float, drift_correction: bool = False) -> float:
+    def drive(self, target_distance_delta: int | float, drift_correction: bool = False, use_ultrasonic: bool = False) -> float:
         error = 0
         start_time = time_seconds(self.p)
         Logger.debug("driving {}mm".format(target_distance_delta))
         if drift_correction:
             error = self.drive_pid_no_drift(target_distance_delta)
         else:
-            error = self.drive_pid(target_distance_delta)
+            error = self.drive_pid(target_distance_delta, use_ultrasonic)
         # if abs(target_distance_delta) > 500:
         #     error = self.drive_pid(target_distance_delta)
         # else:
@@ -112,7 +112,7 @@ class PIDDrivetrain:
         Logger.debug("took {}secs".format(time_seconds(self.p) - start_time))
         return error
 
-    def drive_pid(self, target_distance_delta: int | float) -> float:
+    def drive_pid(self, target_distance_delta: int | float, use_ultrasonic: bool = False) -> float:
         """ Drives the bot a specified distance, version 2
 
         `distance` is in mm. resets the motor encoders.
@@ -129,6 +129,10 @@ class PIDDrivetrain:
         # set the current distance traveled to be 0, since we just reset the
         # motor groups' encoders.
         distance = 0
+
+        initial_ultrasonic_reading = -1
+        if use_ultrasonic:
+            initial_ultrasonic_reading = self.p.front_sonar.distance(MM)
 
         pid = PID(self.config.drive_p, 0, 0,
                   setpoint=target_distance_delta, time_fn=lambda: time_seconds(self.p))
@@ -154,8 +158,12 @@ class PIDDrivetrain:
                 units=RPM) + self.p.right_motors.velocity(units=RPM))/2
 
             # get the new distance traveled
-            distance = revolutions_to_mm(minmax(self.p.left_motors.position(
-                units=TURNS), self.p.right_motors.position(units=TURNS)))
+            if use_ultrasonic:
+                ultrasonic_reading = self.p.front_sonar.distance(MM)
+                distance = initial_ultrasonic_reading - ultrasonic_reading
+            else:
+                distance = revolutions_to_mm(minmax(self.p.left_motors.position(
+                    units=TURNS), self.p.right_motors.position(units=TURNS)))
 
         # stop all motors
         self.p.left_motors.stop(BRAKE)
