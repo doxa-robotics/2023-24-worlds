@@ -42,6 +42,7 @@ class D3Route(DefenseRoute):
 
         # go to the goal
         d.drive(100)
+        p.wait(1500)
         d.turn_to(180 + 45)
         d.drive(-800)
         d.turn_to(180)
