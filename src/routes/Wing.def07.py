@@ -44,3 +44,11 @@ class D7Route(DefenseRoute):
         d.turn(180)
         p.wing_piston.open()
         d.drive(100)
+
+        # Go to the bar
+        d.drive(700)
+        d.turn(-50)
+        d.drive(600)
+        d.turn(-38)
+        p.wing_piston.open()
+        d.drive(1100)
