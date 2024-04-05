@@ -16,24 +16,24 @@ class D6Route(DefenseRoute):
         p.wing_piston.open()
 
         d.turn(-360)
+        d.turn_to(-60)
         p.wing_piston.close()
 
         # Going toward triball
-        d.drive(700)
-        d.turn_to(-90)
-        p.wing_piston.open()
-        p.claw_piston.open()
-        d.drive(900)
+        d.drive(950)
+        d.drive(50)
         p.claw_piston.close()
 
         # Go to the middle bar
-        d.turn_to(0)
-        d.drive(700)
+        d.turn_to(-90)
+        p.claw_piston.open()
         p.wing_piston.open()
-        p.wing_piston.close()
+        d.drive(250)
 
         # Go back to first place
         d.turn_to(-45)
+
+        return
         d.drive(1980)
 
         # Going to the goal
