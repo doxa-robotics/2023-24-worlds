@@ -1,5 +1,8 @@
 from _route import DefenseRoute
 
+# we decided against using the route. it will take too long to test
+# without any benefit.
+
 
 class D1Route(DefenseRoute):
     """ An defensive auton route, descoring triball for AWP

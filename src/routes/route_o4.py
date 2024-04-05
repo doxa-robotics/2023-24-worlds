@@ -10,33 +10,39 @@ class O4Route(OffenseRoute):
 
     @staticmethod
     def run(p, d):
-        p.inertial.set_heading(135)
-        p.claw_piston.close()
-        p.wing_piston.close()
-        d.turn_to(270)
-        p.claw_piston.open()
-        d.drive(1160)
+        # initialize the drivetrain with a downward heading
+        p.inertial.set_heading(180)
+
+        # start
         p.claw_piston.close()
 
         # Going back
-        d.turn_to(180)
+        # TODO: can the bot turn around?
+        d.turn_to(0)  # point back up
         d.drive(1160)
-        d.turn_to(40)
+        d.turn_to(320)
         d.drive(700)
-        d.turn_to(49)
+        p.wing_piston.open()
+        d.turn_to(270)
 
         # Going to goal 1st
         d.drive(580)
         p.claw_piston.open()
-        d.turn_to(270)
+        d.turn_to(180)
         d.drive(1600)
         p.wing_piston.open()
         d.drive(1600)
-        d.turn_to(90)
+        d.turn_to(270)
         d.drive(660)
-        d.turn_to(90)
+        d.turn_to(270)
 
         # Going to final goal
         d.drive(920)
-        p.claw_piston.close()
-        p.wing_piston.close()
+        p.claw_piston.open()
+
+        # back out and touch bar
+        d.drive(-200)
+        d.turn_to(90)
+        d.drive(1200)
+        d.turn_to(180)
+        d.drive(-800)

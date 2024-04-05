@@ -5,7 +5,7 @@ from vex import *
 from constants import AUTONOMOUS_ROUTE
 from peripherals import Peripherals
 from routes import Route
-from utils import Logger
+from utils import Logger, time_seconds
 
 BRAIN_WIDTH_PX = 480
 BRAIN_HEIGHT_PX = 240
@@ -374,6 +374,8 @@ class StatusBar:
     last_has_sdcard: bool
     has_sdcard: bool
 
+    is_calibrating: bool = False
+
     def __init__(self, brain: Brain, team: str, short_team: str) -> None:
         self.team = team
         self.short_team = short_team
@@ -391,6 +393,8 @@ class StatusBar:
         self.has_sdcard = self.brain.sdcard.is_inserted()
         if len(self.status_text) > 0:
             self.text = "{} - {}".format(self.short_team, self.status_text)
+        elif self.is_calibrating:
+            self.text = "calibrating, please don't move"
         else:
             self.text = self.team
 
@@ -851,6 +855,7 @@ class UiHandler:
             if not self.update():
                 # skip updating selector if we consumed the touch
                 selector.update(*self.touch_info())
+            self.status_bar.is_calibrating = self.peripherals.inertial.is_calibrating()
             selector.render(self.brain.screen, self.theme)
             self.render(skip_image=True)
             self.brain.screen.render()
@@ -897,3 +902,27 @@ class UiHandler:
             if not do_loop or self.resolve_route_canceled:
                 break
         Logger.debug("waiting done")
+
+    timer_start: float = 0
+
+    @Logger.logger_context("UiHandler.start_timer")
+    @ui_crashpad("ui rendering")
+    def start_timer(self):
+        self.timer_start = time_seconds(self.peripherals)
+
+    @Logger.logger_context("UiHandler.show_timer")
+    @ui_crashpad("ui rendering")
+    def show_timer(self):
+        elapsed = time_seconds(self.peripherals) - self.timer_start
+        screen = self.brain.screen
+        screen.set_fill_color(0x000000)
+        screen.set_pen_color(0xffffff)
+        screen.set_font(FontType.MONO20)
+        text = "took {} secs".format(
+            elapsed)
+        screen.print_at(
+            text,
+            x=10,
+            y=30
+        )
+        screen.render()

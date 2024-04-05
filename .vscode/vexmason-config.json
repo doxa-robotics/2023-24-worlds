@@ -7,7 +7,7 @@
     "__COMPETITION_MODE__": true,
     "__USE_REAL_BOT__": true,
     "__AUTONOMOUS_ROUTE__": "No route",
-    "__TURNING_SPEED_FACTOR__": 0.5,
+    "__TURNING_SPEED_FACTOR__": 0.3,
     "__FULL_SPEED_PID__": true
   }
 }

@@ -8,6 +8,8 @@ from pid_drivetrain import PIDDrivetrain
 from ui import UiHandler, ui_show_error
 from routes import routes
 
+wait(200)  # let gyro and stuff warm up
+
 # default to AUTONOMOUS_ROUTE but allow selection
 selected_autonomous: str = AUTONOMOUS_ROUTE
 
@@ -28,6 +30,8 @@ def autonomous():
     ui_handler.cancel_resolve_route()
     # wait a negligible amount so the main thread can realize it should stop
     wait(150)
+    while peripherals.inertial.is_calibrating():
+        pass
     ui_handler.route_ui(selected_autonomous)
     route = None
     for possible_route in routes:
@@ -35,7 +39,9 @@ def autonomous():
             route = possible_route
     if route is None:
         raise Exception("undefined route! {}".format(route))
+    ui_handler.start_timer()
     route.run(peripherals, drivetrain)
+    ui_handler.show_timer()
 
 
 @Logger.logger_context("opcontrol")
@@ -58,6 +64,8 @@ def driver():
 if COMPETITION_MODE:
     # initialize the competition first so it works if route resolution fails
     Competition(driver, autonomous)
+    # calibrate the inertial for use in auton
+    peripherals.inertial.calibrate()
 
     ui_handler.resolve_route()
     selected_autonomous = ui_handler.resolved_route

@@ -10,7 +10,11 @@ class D2Route(DefenseRoute):
 
     @staticmethod
     def run(p, d):
-        p.inertial.set_heading(45)
+        # set_heading sets the reference heading.
+        # turn_to turns to an ABSOLUTE angle. it does NOT just turn the robot
+        # it turns to an angle
+
+        p.inertial.set_heading(45)  # TODO: change this to be pointing up
         p.claw_piston.close()
         d.turn_to(90)
         p.wing_piston.open()
