@@ -1,18 +1,18 @@
 from _route import DefenseRoute
 
 
-class D7Route(DefenseRoute):
+class D6Route(DefenseRoute):
     """ An defensive auton route, descoring triball for AWP
     """
     @staticmethod
     def name():
-        return "Defense 7"
+        return "Defense 6"
 
     @staticmethod
     def run(p, d):
-        p.claw_piston.close()
-        p.claw_piston.close()
         p.inertial.set_heading(45)
+
+        p.claw_piston.close()
         p.wing_piston.open()
         d.turn(360)
         p.wing_piston.close()

@@ -6,6 +6,7 @@ from route_d2 import D2Route
 from route_d3 import D3Route
 from route_d4 import D4Route
 from route_d5 import D5Route
+from route_d6 import D6Route
 from route_o1 import O1Route
 from route_o2 import O2Route
 from route_o3 import O3Route
@@ -18,6 +19,7 @@ routes: list[type[Route]] = [
     D3Route,
     D4Route,
     D5Route,
+    D6Route,
 
     O1Route,
     O2Route,
