@@ -1,7 +1,7 @@
 from _route import OffenseRoute
 
 
-class O3Route(OffenseRoute):
+class O4Route(OffenseRoute):
     """ An offensive route
     """
     @staticmethod
