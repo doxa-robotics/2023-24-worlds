@@ -2,8 +2,8 @@ from _route import OffenseRoute
 
 
 class O4Route(OffenseRoute):
-    """ An offensive route
-    """
+    """ An offensive route, getting the corner, bar, preload, and right-center triballs """
+
     @staticmethod
     def name():
         return "Offense 4"
@@ -17,32 +17,37 @@ class O4Route(OffenseRoute):
         p.claw_piston.close()
 
         # Going back
-        # TODO: can the bot turn around?
-        d.turn_to(0)  # point back up
-        d.drive(1160)
-        d.turn_to(320)
-        d.drive(700)
+        d.drive(-600)
+        d.turn_to(160)
         p.wing_piston.open()
-        d.turn_to(270)
+        d.drive(-700)
+        d.turn_to(0)  # descore, overturning to fling away from the edge
+        d.turn_to(270)  # turn back to back into the goal
+        p.wing_piston.close()
 
-        # Going to goal 1st
-        d.drive(580)
-        p.claw_piston.open()
-        d.turn_to(180)
-        d.drive(1600)
-        p.wing_piston.open()
-        d.drive(1600)
-        d.turn_to(270)
-        d.drive(660)
-        d.turn_to(270)
-
-        # Going to final goal
-        d.drive(920)
+        # Backing into the goal the first time
+        d.drive(-580)
+        d.drive(200)
+        d.turn_to(-90)
+        d.drive(200)
         p.claw_piston.open()
 
-        # back out and touch bar
+        # get the rightmost center triball
         d.drive(-200)
-        d.turn_to(90)
-        d.drive(1200)
         d.turn_to(180)
-        d.drive(-800)
+        d.drive(800)
+        d.turn_to(210)
+        d.drive(200)
+        d.drive(50)
+        p.claw_piston.close()
+
+        # go back to the goal
+        d.turn_to(-35)
+        d.drive(900)
+        p.claw_piston.open()
+        d.drive(-200)
+        d.turn_to(-90)
+        d.drive(-1000)
+        d.turn_to(0)
+        d.drive(-900)
+        d.drive(-50)
