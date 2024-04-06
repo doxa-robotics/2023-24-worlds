@@ -67,7 +67,7 @@ class RealBotPeripherals(Peripherals):
 
         self.front_sonar = Sonar(self.brain.three_wire_port.a)
 
-        self.inertial = Inertial(Ports.PORT6)
+        self.inertial = Inertial(Ports.PORT18)
 
         self.left_motors_list = [
             Motor(Ports.PORT20, False),
