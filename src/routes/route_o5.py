@@ -18,12 +18,30 @@ class O5Route(OffenseRoute):
         p.claw_piston.close()
         p.wing_piston.open()
 
-        # drive backwards to descore match load zone
-        d.drive(-400)
+        d.drive(-65)
+        # d.turn_to(110)
+        d.turn_to(110)
+        d.drive(-100)
+        # d.turn_to(90)
+        # d.drive(-20)
+        # return
+        # d.turn_to(60)
+        d.turn_to(110)
+        p.wait(300)
+        p.wing_piston.close()
+        d.drive(-700)
         d.turn_to(100)
-        p.wing_piston.close()
-        d.drive(-1000)  # back into the goal
-        p.wing_piston.close()
+        d.drive(-520)
+
+        # return
+
+        # drive backwards to descore match load zone
+        # d.drive(-400)
+        # d.turn_to(100)
+        # p.wing_piston.close()
+        # d.drive(-1000)  # back into the goal
+
+        # p.wing_piston.close()
         p.claw_piston.open()  # open the claw
         d.turn_to(360 - 20)  # prepare to back out
 
@@ -35,13 +53,13 @@ class O5Route(OffenseRoute):
         p.claw_piston.close()
         d.turn_to(170)
         p.wing_piston.open()
-        d.drive(-800)  # back into the goal
+        p.claw_piston.open()
+        d.drive(-900)  # back into the goal
 
         # deposit the captured triball
         p.wing_piston.close()
         d.turn_to(0)
-        p.claw_piston.open()
-        d.drive(100)
+        # d.drive(100)
 
         d.turn_to(180 - 24)  # spin around to intake
         d.drive(960)
