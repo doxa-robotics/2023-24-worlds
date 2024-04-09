@@ -46,26 +46,29 @@ class O5Route(OffenseRoute):
         d.turn_to(360 - 20)  # prepare to back out
 
         # back out of the goal and get the center and bar-center triballs
-        d.drive(-900)
-        d.turn_to(223)  # turn around and approach at an angle
-        d.drive(270)
+        d.drive(-970)
+        d.turn_to(227)  # turn around and approach at an angle
+        d.drive(180)
         d.drive(50)  # on purpose to slow down
         p.claw_piston.close()
+        d.drive(50)
         d.turn_to(170)
         p.wing_piston.open()
-        p.claw_piston.open()
         d.drive(-900)  # back into the goal
 
         # deposit the captured triball
         p.wing_piston.close()
-        d.turn_to(0)
+        # d.turn_to(0)
         # d.drive(100)
 
-        d.turn_to(180 - 24)  # spin around to intake
-        d.drive(960)
+        d.turn_to(360 - 30)
+        p.claw_piston.open()
+        d.drive(-500)
+        d.turn_to(180 - 30)  # spin around to intake
+        d.drive(460)
         d.drive(30)
         p.claw_piston.close()
-        d.turn_to(360 - 24)
+        d.turn_to(360 - 20)
         d.drive(900)
         p.claw_piston.open()
 
