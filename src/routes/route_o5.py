@@ -47,7 +47,6 @@ class O5Route(OffenseRoute):
         d.drive(960)
         d.drive(30)
         p.claw_piston.close()
-        # p.wait(400)
         d.turn_to(360 - 24)
         d.drive(900)
         p.claw_piston.open()
