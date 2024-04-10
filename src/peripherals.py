@@ -43,6 +43,7 @@ class Peripherals:
     claw_piston: Pneumatics
     wing_piston: Pneumatics
     front_sonar: Sonar
+    back_photomicro_sensor: DigitalIn
 
     WHEEL_TRAVEL_MM: int
     WHEEL_TRACK_WIDTH_MM: int
@@ -83,6 +84,8 @@ class RealBotPeripherals(Peripherals):
             Motor(Ports.PORT2, False),
         ]
         self.right_motors = MotorGroup(*self.right_motors_list)
+
+        self.back_photomicro_sensor = DigitalIn(self.brain.three_wire_port.f)
 
         self.pid_drivetrain_config = PIDDrivetrainConfig(
             turning_p=0.9 if full_speed_pid else 0.4,
@@ -127,6 +130,8 @@ class TestBotPeripherals(Peripherals):
             Motor(Ports.PORT1, True)
         ]
         self.right_motors = MotorGroup(*self.right_motors_list)
+
+        self.back_photomicro_sensor = DigitalIn(self.brain.three_wire_port.f)
 
         self.pid_drivetrain_config = PIDDrivetrainConfig(
             turning_p=0.01,

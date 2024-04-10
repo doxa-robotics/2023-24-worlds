@@ -112,6 +112,19 @@ class PIDDrivetrain:
         Logger.debug("took {}secs".format(time_seconds(self.p) - start_time))
         return error
 
+    @Logger.logger_context("PIDDrivetrain.drive_until_photomicro_state")
+    def drive_until_photomicro_state(self, state: bool, velocity_rpm: int | float):
+        """ Drives until the photomicro sensor reports [state]. Set velocity_rpm to a negative value to drive backwards. """
+        Logger.debug("driving until photomicro reports {}".format(
+            "HIGH" if state else "LOW"))
+        self.p.left_motors.spin(FORWARD, velocity_rpm, RPM)
+        self.p.right_motors.spin(FORWARD, velocity_rpm, RPM)
+        while self.p.back_photomicro_sensor.value() != state:
+            self.p.wait(10)
+        Logger.debug("braking")
+        self.p.left_motors.stop(BRAKE)
+        self.p.right_motors.stop(BRAKE)
+
     def drive_pid(self, target_distance_delta: int | float, use_ultrasonic: bool = False) -> float:
         """ Drives the bot a specified distance, version 2
 
