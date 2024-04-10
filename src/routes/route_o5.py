@@ -18,7 +18,7 @@ class O5Route(OffenseRoute):
         p.claw_piston.close()
         p.wing_piston.open()
 
-        d.drive(-65)
+        d.drive(-70)
         # d.turn_to(110)
         d.turn_to(110)
         d.drive(-100)
@@ -27,11 +27,12 @@ class O5Route(OffenseRoute):
         # return
         # d.turn_to(60)
         d.turn_to(110)
-        p.wait(300)
         p.wing_piston.close()
         d.drive(-700)
         d.turn_to(100)
-        d.drive(-520)
+        # d.drive(-520)
+        d.drive(-350)
+        d.drive_until_photomicro_state(False, -40)
 
         # return
 
@@ -61,12 +62,12 @@ class O5Route(OffenseRoute):
         # d.turn_to(0)
         # d.drive(100)
 
-        d.turn_to(360 - 30)
+        d.turn_to(360 - 27)
         p.claw_piston.open()
         d.drive(-500)
-        d.turn_to(180 - 30)  # spin around to intake
-        d.drive(460)
-        d.drive(30)
+        d.turn_to(180 - 27)  # spin around to intake
+        d.drive(440)
+        d.drive(40)
         p.claw_piston.close()
         d.turn_to(360 - 20)
         d.drive(900)

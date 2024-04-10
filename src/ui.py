@@ -915,7 +915,7 @@ class UiHandler:
     def show_timer(self):
         elapsed = time_seconds(self.peripherals) - self.timer_start
         screen = self.brain.screen
-        screen.set_fill_color(0x000000 if elapsed <= 15.0 else 0x774444)
+        screen.set_fill_color(0x000000 if elapsed <= 15.0 else 0xaa4444)
         screen.set_pen_color(0xffffff)
         screen.set_font(FontType.PROP60)
         text = "{} secs".format(
