@@ -53,9 +53,9 @@ class O5Route(OffenseRoute):
         p.wing_piston.close()
         d.turn_to(0)
         p.claw_piston.open()
-        d.drive(-250)
 
         # touch the bar
-        d.drive(-800)
+        d.drive(-900)
         d.turn_to(270)
-        d.drive(-1100)
+        p.wing_piston.open()
+        d.drive(-1200)
