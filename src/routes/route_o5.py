@@ -18,47 +18,44 @@ class O5Route(OffenseRoute):
         p.claw_piston.close()
         p.wing_piston.open()
 
-        d.drive(-70)
+        d.drive(-80)
         d.turn_to(110)
         d.drive(-100)
         d.turn_to(110)
-        p.wing_piston.close()
         d.drive(-700)
+        p.wing_piston.close()
         d.turn_to(100)
-        d.drive(-350)
+        d.drive(-350)  # the triball slips out here
+        p.claw_piston.open()
         d.drive_until_photomicro_state(False, -40)
 
-        p.claw_piston.open()  # open the claw
-        d.turn_to(360 - 20)  # prepare to back out
+        d.turn_to(180 - 17)  # prepare to back out
 
-        # back out of the goal and get the center and bar-center triballs
-        d.drive(-970)
-        d.turn_to(227)  # turn around and approach at an angle
-        d.drive(180)
+        # forwards out of the goal and get the center and bar-center triballs
+        d.drive(1180)
         d.drive(50)  # on purpose to slow down
         p.claw_piston.close()
         d.drive(50)
-        d.turn_to(170)
+        d.turn_to(360 - 30)
+        p.claw_piston.open()
+        d.drive(250)
+        d.turn_to(220)
+        d.drive(340)
+        d.drive(50)
+        p.claw_piston.close()
+
+        # back into the goal
+        d.turn_to(180)
         p.wing_piston.open()
-        d.drive(-900)  # back into the goal
+        d.drive(-900)
 
         # deposit the captured triball
         p.wing_piston.close()
-
-        d.turn_to(360 - 27)
+        d.turn_to(0)
         p.claw_piston.open()
-        d.drive(-500)
-        d.turn_to(180 - 27)  # spin around to intake
-        d.drive(440)
-        d.drive(40)
-        p.claw_piston.close()
-        d.turn_to(360 - 20)
-        d.drive(900)
-        p.claw_piston.open()
+        d.drive(-250)
 
-        # back out of the goal and touch the bar
-        # change of plans: just touch the bar by ramming the barrier
-        d.drive(-1100)
+        # touch the bar
+        d.drive(-800)
         d.turn_to(270)
-        d.drive(-500)
-        p.wing_piston.open()
+        d.drive(-1100)
