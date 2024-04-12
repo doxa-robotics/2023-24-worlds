@@ -31,7 +31,7 @@ class O6Route(OffenseRoute):
         d.drive(-700)
         p.wing_piston.close()
         d.turn_to(100)
-        d.drive(-350)  # the triball slips out here
+        d.drive(-400)  # the triball slips out here
         p.claw_piston.open()
         d.drive_until_photomicro_state(False, -40)
 
@@ -59,4 +59,4 @@ class O6Route(OffenseRoute):
         p.wing_piston.close()
         d.turn_to(0)
         p.claw_piston.open()
-        d.drive(-250)
+        d.drive(-450)
