@@ -23,7 +23,7 @@ routes: list[type[Route]] = [
     D6Route,
 
     O1Route,
-    O2Route,
+    # O2Route,
     O3Route,
     O4Route,
     O5Route,
