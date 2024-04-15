@@ -914,6 +914,7 @@ class UiHandler:
     @ui_crashpad("ui rendering")
     def show_timer(self):
         elapsed = time_seconds(self.peripherals) - self.timer_start
+        Logger.debug("whole route was {} secs".format(elapsed))
         screen = self.brain.screen
         screen.set_fill_color(0x000000 if elapsed <= 15.0 else 0xaa4444)
         screen.set_pen_color(0xffffff)
