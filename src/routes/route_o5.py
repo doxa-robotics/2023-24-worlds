@@ -58,3 +58,5 @@ class O5Route(OffenseRoute):
         d.drive(-1200)
         p.wing_piston.open()
         d.turn_to(270)
+        for _ in range(4):
+            d.drive(-100)
