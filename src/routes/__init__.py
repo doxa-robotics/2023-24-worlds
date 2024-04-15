@@ -16,16 +16,16 @@ from route_o6 import O6Route
 
 routes: list[type[Route]] = [
     # D1Route,
-    D2Route,
+    # D2Route,
     D3Route,
-    D4Route,
+    # D4Route,
     D5Route,
-    D6Route,
+    # D6Route,
 
-    O1Route,
+    # O1Route,
     # O2Route,
     O3Route,
-    O4Route,
+    # O4Route,
     O5Route,
     O6Route,
 
