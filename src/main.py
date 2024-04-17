@@ -18,6 +18,7 @@ if USE_REAL_BOT:
     peripherals = RealBotPeripherals(FULL_SPEED_PID)
 else:
     peripherals = TestBotPeripherals()
+Logger.set_peripherals(peripherals)
 drivetrain = PIDDrivetrain(peripherals)
 ui_handler = UiHandler(peripherals.brain, peripherals,
                        "DOXA Robotics 99484", "99484",
@@ -41,6 +42,7 @@ def autonomous():
         raise Exception("undefined route! {}".format(route))
     ui_handler.start_timer()
     route.run(peripherals, drivetrain)
+    Logger.dump_to_sdcard()
     ui_handler.show_timer()
 
 
@@ -56,8 +58,10 @@ def driver():
     while True:
         try:
             driver_control(peripherals)
+            Logger.dump_to_sdcard()
         except Exception as err:
             Logger.debug(repr(err))
+            Logger.dump_to_sdcard()
             ui_show_error("driver control", err)
 
 
@@ -70,7 +74,9 @@ if COMPETITION_MODE:
     ui_handler.resolve_route()
     selected_autonomous = ui_handler.resolved_route
     Logger.debug("resolved autonomous route: {}".format(selected_autonomous))
+    Logger.dump_to_sdcard()
     ui_handler.waiting_ui()
 else:
     ui_handler.waiting_ui(do_loop=False)
+    Logger.dump_to_sdcard()
     autonomous()
