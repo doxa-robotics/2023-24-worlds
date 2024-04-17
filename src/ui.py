@@ -1,4 +1,5 @@
 from math import floor
+import random
 
 from vex import *
 
@@ -825,7 +826,8 @@ class UiHandler:
 
         self.routes = routes
 
-        self.theme = UiTheme.theme_black()
+        # hehe easter egg for the drive team
+        self.theme = UiTheme.theme_black() if random.random() else UiTheme.theme_blue()
 
     def update(self):
         self.touching = self.brain.screen.pressing()
