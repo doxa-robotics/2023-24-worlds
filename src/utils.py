@@ -72,16 +72,16 @@ class BaseLogger:
         self.content += line
         self.content += "\n"
         self.print(line)
-        if self.p is not None and time_seconds(self.p) - self.last_dump_time > 300:
+        if self.p is not None and time_seconds(self.p) - self.last_dump_time > 1:
             self.dump_to_sdcard()
 
     def dump_to_sdcard(self):
         if self.p is not None and self.sdcard is not None:
             bytes_written = self.sdcard.savefile(self.format_dump_filename(),
                                                  bytearray(self.content, "utf-8"))
+            self.last_dump_time = time_seconds(self.p)
             self.debug("dumped {} bytes to {}".format(
                 bytes_written, self.format_dump_filename()))
-            self.last_dump_time = time_seconds(self.p)
 
     def print(self, content: str):
         print(content, file=stderr)
