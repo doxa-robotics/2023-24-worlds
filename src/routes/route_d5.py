@@ -34,17 +34,18 @@ class D5Route(DefenseRoute):
         d.turn_to(180 + 35)
         d.drive(-350)
         d.turn_to(245)
+        d.drive(-250)
         p.wing_piston.close()
-        d.drive(-300)
         d.turn_to(270)
-        d.drive(-30)
+        d.drive(-150)
+        d.drive(-50)
         d.turn_to(270)
 
         # go descore
-        d.drive(300)
+        d.drive(250)
         d.turn_to(45)
         p.wing_piston.open()
-        d.drive(-330)
+        d.drive(-310)
 
         # touch bar
         d.turn_to(10)
