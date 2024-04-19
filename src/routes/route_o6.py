@@ -24,7 +24,7 @@ class O6Route(OffenseRoute):
         d.turn_to(135)
         p.wing_piston.open()
 
-        d.drive(-400)
+        d.drive(-360)
         d.turn_to(110)
         d.drive(-100)
         d.turn_to(110)
