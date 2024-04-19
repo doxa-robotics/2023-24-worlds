@@ -1,3 +1,4 @@
+import collections
 from math import floor
 import random
 
@@ -398,6 +399,7 @@ class StatusBar:
             self.text = "calibrating, please don't move"
         else:
             self.text = self.team
+        return False
 
     def update_to_route_select(self):
         self.status_text = ""
@@ -531,6 +533,88 @@ class StatusBar:
                 x2=BRAIN_WIDTH_PX - PADDING - battery_width - item_padding + 1,
                 y2=BRAIN_HEIGHT_PX - BOTTOM_BAR_HEIGHT/2 + sdcard_height/2 + 1
             )
+
+
+class CalibrationAlert:
+    x: int
+    y: int
+    width: int
+    height: int
+    inertial: Inertial
+    recalibrate_button: NormalButton
+
+    last_showing: bool
+    showing: bool
+    past_headings: list[float]
+
+    def __init__(self, x: int, y: int, width: int, height: int, inertial: Inertial) -> None:
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.inertial = inertial
+
+        self.last_showing = False
+        self.showing = True
+        self.past_headings = [0]
+
+        self.recalibrate_button = NormalButton(
+            initial_disabled=False, x=self.x+self.width/2-80, y=self.y+self.height/2 + 10, width=160, height=40, text="")
+
+    def render(self, screen: Brain.Lcd, theme: UiTheme):
+        if self.showing:
+            screen.set_pen_width(0)
+            screen.set_fill_color(theme.button_fatal)
+            screen.draw_rectangle(
+                x=self.x,
+                y=self.y,
+                width=self.width,
+                height=self.height
+            )
+            self.recalibrate_button.render(screen, theme)
+            screen.set_font(FontType.PROP30)
+            screen.set_pen_color(theme.text)
+            screen.set_fill_color(theme.button_fatal)
+            text = "Gyro may be drifting."
+            screen.print_at(
+                text,
+                x=self.x + self.width/2 - screen.get_string_width(text)/2,
+                y=self.y + self.height/2 - 20
+            )
+
+    def update(self, touching: bool, clicked: bool, touch_x: int, touch_y: int) -> bool:
+        calibrating = self.inertial.is_calibrating()
+        self.recalibrate_button.set_disabled(calibrating)
+        self.recalibrate_button.text = "Calibrating..." if calibrating else "Recalibrate"
+
+        if len(self.past_headings) > 20:
+            self.past_headings.pop(0)
+        self.past_headings.append(self.inertial.heading())
+
+        heading_min = min(self.past_headings)
+        heading_max = max(self.past_headings)
+        if heading_max - heading_min > 1.0:
+            self.showing = True
+        else:
+            self.showing = False
+        if calibrating:
+            self.showing = True
+
+        touching_btn = self.recalibrate_button.update(
+            touching, clicked, touch_x, touch_y)
+        if self.recalibrate_button.selected:
+            self.recalibrate_button.set_selected(False)
+            self.inertial.calibrate()
+        touching_dialog = (self.x <= touch_x <= self.x + self.width and
+                           self.y <= touch_y <= self.y + self.height)
+
+        return touching_btn or (self.showing and touching_dialog)
+
+    def needs_update(self):
+        if self.last_showing != self.showing:
+            self.last_showing = self.showing
+            return True
+        return self.recalibrate_button.needs_update()
 
 
 class MotorTempWidget(GenericButton):
@@ -802,6 +886,7 @@ class UiHandler:
 
     motor_temp_widget: MotorTempWidget
     status_bar: StatusBar
+    calibration_alert: CalibrationAlert
 
     theme: UiTheme
 
@@ -818,6 +903,8 @@ class UiHandler:
         self.motor_temp_widget = MotorTempWidget(
             peripherals, x=0, y=0, width=80, height=30)
         self.status_bar = StatusBar(brain, team, short_team)
+        self.calibration_alert = CalibrationAlert(
+            PADDING, TOP_PADDING, BRAIN_WIDTH_PX - PADDING*2, BRAIN_HEIGHT_PX - TOP_PADDING - PADDING, peripherals.inertial)
 
         self.touching = False
         self.clicked = False
@@ -836,14 +923,20 @@ class UiHandler:
         self.touch_x = self.brain.screen.x_position()
         self.touch_y = self.brain.screen.y_position()
 
-        self.status_bar.update()
-        return self.motor_temp_widget.update(*self.touch_info())
+        consumed = False
+        consumed = consumed or self.status_bar.update()
+        consumed = consumed or self.calibration_alert.update(
+            *self.touch_info())
+        consumed = consumed or self.motor_temp_widget.update(
+            *self.touch_info())
+        return consumed
 
     def render(self, skip_image: bool = False):
         if not skip_image:
             self.brain.screen.draw_image_from_file("logo.bmp", 0, 0)
         self.motor_temp_widget.render(self.brain.screen, self.theme)
         self.status_bar.render(self.brain.screen, self.theme)
+        self.calibration_alert.render(self.brain.screen, self.theme)
 
     def touch_info(self) -> tuple[bool, bool, int, int]:
         return (self.touching, self.clicked, self.touch_x, self.touch_y)
