@@ -57,7 +57,7 @@ class BaseLogger:
             dump_file_index = 0
             try:
                 dump_file_index = int(self.sdcard.loadfile(
-                    CURRENT_INDEX_FILENAME).decode("utf-8", "ignore"))
+                    CURRENT_INDEX_FILENAME).decode("utf-8", "ignore")) + 1
             except:
                 pass
             self.dump_file_index = dump_file_index
@@ -69,10 +69,14 @@ class BaseLogger:
 
     def debug(self, content: str):
         line = "{}{}".format("  " * self.indentation, content)
+        if self.p is not None:
+            ms = str(time_seconds(self.p) * 1000.0)
+            self.content += ms
+            self.content += " " * (6 - len(ms))
         self.content += line
         self.content += "\n"
         self.print(line)
-        if self.p is not None and time_seconds(self.p) - self.last_dump_time > 1:
+        if self.p is not None and time_seconds(self.p) - self.last_dump_time > 1.0:
             self.dump_to_sdcard()
 
     def dump_to_sdcard(self):
