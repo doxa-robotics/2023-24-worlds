@@ -547,6 +547,8 @@ class CalibrationAlert:
     showing: bool
     past_headings: list[float]
 
+    hidden: bool = False
+
     def __init__(self, x: int, y: int, width: int, height: int, inertial: Inertial) -> None:
         self.x = x
         self.y = y
@@ -562,7 +564,7 @@ class CalibrationAlert:
             initial_disabled=False, x=self.x+self.width/2-80, y=self.y+self.height/2 + 10, width=160, height=40, text="")
 
     def render(self, screen: Brain.Lcd, theme: UiTheme):
-        if self.showing:
+        if self.showing and not self.hidden:
             screen.set_pen_width(0)
             screen.set_fill_color(theme.button_fatal)
             screen.draw_rectangle(
@@ -968,6 +970,7 @@ class UiHandler:
     def route_ui(self, route: str) -> None:
         self.motor_temp_widget.set_selected(False)
         self.motor_temp_widget.hidden = True
+        self.calibration_alert.hidden = True
         self.status_bar.update_to_route(route)
         self.update()
         self.render()
@@ -977,6 +980,7 @@ class UiHandler:
     @ui_crashpad("ui rendering")
     def opcontrol_ui(self) -> None:
         self.motor_temp_widget.hidden = True
+        self.calibration_alert.hidden = True
         self.motor_temp_widget.set_selected(False)
         self.status_bar.update_to_opcontrol()
         self.update()
