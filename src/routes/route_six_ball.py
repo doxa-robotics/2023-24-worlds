@@ -1,12 +1,12 @@
 from _route import OffenseRoute
 
 
-class O6Route(OffenseRoute):
+class SixBallRoute(OffenseRoute):
     """ An offensive route, going under the goal
     """
     @staticmethod
     def name():
-        return "Offense 6"
+        return "6-ball"
 
     @staticmethod
     def run(p, d):

@@ -1,12 +1,12 @@
 from _route import OffenseRoute
 
 
-class O3Route(OffenseRoute):
+class RushORoute(OffenseRoute):
     """ An offensive route, rushing
     """
     @staticmethod
     def name():
-        return "Offense 3"
+        return "Rush (O)"
 
     @staticmethod
     def run(p, d):

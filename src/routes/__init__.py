@@ -1,20 +1,20 @@
 from _route import EmptyRoute, Route
-from route_d3 import D3Route
-from route_d5 import D5Route
-from route_o2 import O2Route
-from route_o3 import O3Route
-from route_o5 import O5Route
-from route_o6 import O6Route
+from route_disrupt_d import DisruptDRoute
+from route_five_ball import FiveBallRoute
+from route_rush_o import RushORoute
+from route_safe_d import SafeDRoute
+from route_safe_o import SafeORoute
+from route_six_ball import SixBallRoute
 from route_test import TestRoute
 
 routes: list[type[Route]] = [
-    D3Route,
-    D5Route,
+    SafeDRoute,
+    DisruptDRoute,
 
-    O2Route,
-    O3Route,
-    O5Route,
-    O6Route,
+    SafeORoute,
+    RushORoute,
+    FiveBallRoute,
+    SixBallRoute,
 
     TestRoute,
     EmptyRoute

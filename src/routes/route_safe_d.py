@@ -1,12 +1,12 @@
 from _route import DefenseRoute
 
 
-class D3Route(DefenseRoute):
+class SafeDRoute(DefenseRoute):
     """ A defensive route
     """
     @staticmethod
     def name():
-        return "Defense 3"
+        return "Safe (D)"
 
     @staticmethod
     def run(p, d):

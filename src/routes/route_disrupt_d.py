@@ -1,10 +1,10 @@
 from _route import DefenseRoute
 
 
-class D5Route(DefenseRoute):
+class DisruptDRoute(DefenseRoute):
     @staticmethod
     def name():
-        return "Defense 5"
+        return "Disrupt (D)"
 
     @staticmethod
     def run(p, d):
