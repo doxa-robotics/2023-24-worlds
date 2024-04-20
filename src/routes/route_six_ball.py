@@ -15,6 +15,7 @@ class SixBallRoute(OffenseRoute):
         p.inertial.set_heading(180)
 
         # close the claw for preload
+        d.drive(30)
         p.claw_piston.close()
 
         # back up
@@ -49,6 +50,7 @@ class SixBallRoute(OffenseRoute):
         d.drive(340)
         d.drive(50)
         p.claw_piston.close()
+        d.drive(30)
 
         # back into the goal
         d.turn_to(180)

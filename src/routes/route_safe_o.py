@@ -13,10 +13,11 @@ class SafeORoute(OffenseRoute):
         p.inertial.set_heading(180)
 
         # close the claw for preload
+        d.drive(30)
         p.claw_piston.close()
 
         # back up
-        d.drive(-830)
+        d.drive(-860)
 
         # turn to descore and open wings
         d.turn_to(135)
@@ -49,4 +50,4 @@ class SafeORoute(OffenseRoute):
         d.turn_to(270)
         p.wing_piston.open()
         d.drive(-700)
-        d.turn_to(230)
+        d.turn_to(260)
