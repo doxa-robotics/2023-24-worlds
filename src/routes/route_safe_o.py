@@ -43,7 +43,10 @@ class SafeORoute(OffenseRoute):
         d.turn_to(360 - 25)
         p.claw_piston.open()
         d.drive(1000)
+
+        # bar touch
         d.drive(-1200)
         d.turn_to(270)
         p.wing_piston.open()
         d.drive(-700)
+        d.turn_to(230)
