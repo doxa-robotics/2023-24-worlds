@@ -1,7 +1,8 @@
 from simple_pid import PID
-from utils import Logger, time_seconds
 from vex import *
+
 from peripherals import Peripherals, PIDDrivetrainConfig
+from utils import Logger, time_seconds
 
 DRIFT_CORRECTION_FACTOR = 4.2
 
@@ -89,14 +90,15 @@ class PIDDrivetrain:
         return abs(heading)
 
     @Logger.logger_context("PIDDrivetrain.drive")
-    def drive(self, target_distance_delta: int | float, drift_correction: bool = False, use_ultrasonic: bool = False) -> float:
+    def drive(self, target_distance_delta: int | float, drift_correction: bool = False, use_ultrasonic: bool = False, callback_distance: int | float | None = None, callback: Callable[...] | None = None) -> float:
         error = 0
         start_time = time_seconds(self.p)
         Logger.debug("driving {}mm".format(target_distance_delta))
         if drift_correction:
             error = self.drive_pid_no_drift(target_distance_delta)
         else:
-            error = self.drive_pid(target_distance_delta, use_ultrasonic)
+            error = self.drive_pid(target_distance_delta,
+                                   use_ultrasonic, callback_distance, callback)
         # if abs(target_distance_delta) > 500:
         #     error = self.drive_pid(target_distance_delta)
         # else:
@@ -125,7 +127,7 @@ class PIDDrivetrain:
         self.p.left_motors.stop(BRAKE)
         self.p.right_motors.stop(BRAKE)
 
-    def drive_pid(self, target_distance_delta: int | float, use_ultrasonic: bool = False) -> float:
+    def drive_pid(self, target_distance_delta: int | float, use_ultrasonic: bool = False, callback_distance: int | float | None = None, callback: Callable[...] | None = None) -> float:
         """ Drives the bot a specified distance, version 2
 
         `distance` is in mm. resets the motor encoders.
@@ -142,6 +144,8 @@ class PIDDrivetrain:
         # set the current distance traveled to be 0, since we just reset the
         # motor groups' encoders.
         distance = 0
+
+        callback_triggered = False
 
         initial_ultrasonic_reading = -1
         if use_ultrasonic:
@@ -177,6 +181,10 @@ class PIDDrivetrain:
             else:
                 distance = revolutions_to_mm(minmax(self.p.left_motors.position(
                     units=TURNS), self.p.right_motors.position(units=TURNS)))
+
+            if not callback_triggered and callback_distance is not None and callback is not None and ((target_distance_delta > 0 and float(distance) > float(callback_distance)) and (target_distance_delta < 0 and float(distance) < float(callback_distance))):
+                callback_triggered = False
+                callback()
 
         # stop all motors
         self.p.left_motors.stop(BRAKE)
