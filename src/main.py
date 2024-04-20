@@ -1,12 +1,13 @@
 from vex import *
 
-from utils import Logger, has_interaction
-from constants import AUTONOMOUS_ROUTE, COMPETITION_MODE, FULL_SPEED_PID, USE_REAL_BOT
+from constants import (AUTONOMOUS_ROUTE, COMPETITION_MODE, FULL_SPEED_PID,
+                       USE_REAL_BOT)
 from driver_control import driver_control
 from peripherals import Peripherals, RealBotPeripherals, TestBotPeripherals
 from pid_drivetrain import PIDDrivetrain
-from ui import UiHandler, ui_show_error
 from routes import routes
+from ui import UiHandler, ui_show_error
+from utils import Logger, has_interaction
 
 wait(200)  # let gyro and stuff warm up
 
