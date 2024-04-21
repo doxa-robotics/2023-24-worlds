@@ -1,6 +1,8 @@
-from vex import *
-from peripherals import Peripherals
 from sys import stderr
+
+from vex import *
+
+from peripherals import Peripherals
 
 
 def has_interaction(p: Peripherals):
@@ -70,9 +72,9 @@ class BaseLogger:
     def debug(self, content: str):
         line = "{}{}".format("  " * self.indentation, content)
         if self.p is not None:
-            ms = str(time_seconds(self.p) * 1000.0)
-            self.content += ms
-            self.content += " " * (6 - len(ms))
+            secs = str(time_seconds(self.p))
+            self.content += secs
+            self.content += " " * (8 - len(secs))
         self.content += line
         self.content += "\n"
         self.print(line)
