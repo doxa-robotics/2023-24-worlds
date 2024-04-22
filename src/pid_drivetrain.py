@@ -182,8 +182,8 @@ class PIDDrivetrain:
                 distance = revolutions_to_mm(minmax(self.p.left_motors.position(
                     units=TURNS), self.p.right_motors.position(units=TURNS)))
 
-            if not callback_triggered and callback_distance is not None and callback is not None and ((target_distance_delta > 0 and float(distance) > float(callback_distance)) and (target_distance_delta < 0 and float(distance) < float(callback_distance))):
-                callback_triggered = False
+            if not callback_triggered and callback_distance is not None and callback is not None and ((target_distance_delta > 0 and float(distance) > float(callback_distance)) or (target_distance_delta < 0 and float(distance) < float(callback_distance))):
+                callback_triggered = True
                 callback()
 
         # stop all motors
