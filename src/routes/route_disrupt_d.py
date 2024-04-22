@@ -34,10 +34,10 @@ class DisruptDRoute(DefenseRoute):
         d.turn_to(180 + 25)
         d.drive(-450)
         d.turn_to(230)
-        d.drive(-240)
+        d.drive(-220)
         p.wing_piston.close()
         d.turn_to(270)
-        d.drive(-200)
+        d.drive(-40)
         d.turn_to(270)
 
         # go descore
@@ -49,7 +49,7 @@ class DisruptDRoute(DefenseRoute):
 
         # touch bar
         d.turn_to(10)
-        d.drive(-860)
+        d.drive(-880)
         p.wing_piston.close()
         d.turn_to(0)
         d.drive(-100)
