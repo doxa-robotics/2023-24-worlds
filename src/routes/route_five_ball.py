@@ -43,6 +43,7 @@ class FiveBallRoute(OffenseRoute):
         d.drive(340)
         d.drive(50)
         p.claw_piston.close()
+        d.drive(30)
 
         # back into the goal
         d.turn_to(180)
