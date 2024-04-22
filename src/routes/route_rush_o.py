@@ -23,10 +23,11 @@ class RushORoute(OffenseRoute):
         d.drive(620)  # drop the middle ball off in the goal
 
         # intake the middle top ball
-        d.turn_to(185)
-        d.drive(880)
+        d.turn_to(189)
+        d.drive(890)
         d.drive(50)
         p.claw_piston.close()
+        d.drive(50)
 
         # back into the goal
         d.turn_to(10)
@@ -46,7 +47,7 @@ class RushORoute(OffenseRoute):
         # descore corner and score preload
         d.turn_to(160)
         p.wing_piston.open()
-        d.drive(-300)
+        d.drive(-260)
         d.turn_to(110)
         d.drive(-100)
         d.turn_to(110)
