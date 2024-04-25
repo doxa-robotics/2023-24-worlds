@@ -16,10 +16,10 @@ class SafeDRoute(DefenseRoute):
         p.claw_piston.close()
 
         d.turn_to(180 + 20)  # descore
-        p.wing_piston.close()
 
         # prepare to score preload
         d.turn_to(180 + 65)
+        p.wing_piston.close()
         p.claw_piston.open()
         d.drive(120)
         p.wait(500)
@@ -44,7 +44,9 @@ class SafeDRoute(DefenseRoute):
         d.drive(100)
         p.wait(500)
         d.turn_to(180 + 45)
-        d.drive(-800)
+        d.drive(-770)
         d.turn_to(180)
-        d.drive(-598)
+        d.drive(-610)
+        p.wing_piston.open()
         d.drive(-70)
+        d.turn_to(187)
