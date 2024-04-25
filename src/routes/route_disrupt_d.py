@@ -45,11 +45,12 @@ class DisruptDRoute(DefenseRoute):
         d.drive(60)
         d.turn_to(45)
         p.wing_piston.open()
-        d.drive(-325)
+        d.drive(-310)
 
         # touch bar
         d.turn_to(10)
-        d.drive(-900)
-        p.wing_piston.close()
+        d.drive(-940)
         d.turn_to(0)
-        d.drive(-100)
+        p.wing_piston.open()
+        d.drive(-70)
+        d.turn_to(7)
