@@ -25,7 +25,8 @@ class FiveBallRoute(OffenseRoute):
         d.drive(-700)
         p.wing_piston.close()
         d.turn_to(100)
-        d.drive(-360)  # the triball slips out here
+        d.drive(-360, callback_distance=-150,
+                callback=lambda: p.claw_piston.open())  # the triball slips out here
         p.claw_piston.open()
         d.drive_until_photomicro_state(False, -40)
 
