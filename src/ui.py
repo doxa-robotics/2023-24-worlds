@@ -1,6 +1,6 @@
 import collections
-from math import floor
 import random
+from math import floor
 
 from vex import *
 
@@ -610,7 +610,7 @@ class CalibrationAlert:
         touching_dialog = (self.x <= touch_x <= self.x + self.width and
                            self.y <= touch_y <= self.y + self.height)
 
-        return touching_btn or (self.showing and touching_dialog)
+        return self.showing and (touching_btn or touching_dialog)
 
     def needs_update(self):
         if self.last_showing != self.showing:
