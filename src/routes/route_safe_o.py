@@ -17,13 +17,13 @@ class SafeORoute(OffenseRoute):
         p.claw_piston.close()
 
         # back up
-        d.drive(-860)
+        d.drive(-880)
 
         # turn to descore and open wings
         d.turn_to(135)
         p.wing_piston.open()
 
-        d.drive(-360)
+        d.drive(-340)
         d.turn_to(110)
         d.drive(-100)
         d.turn_to(110)

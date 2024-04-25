@@ -59,5 +59,5 @@ class FiveBallRoute(OffenseRoute):
         d.drive(-1400)
         p.wing_piston.open()
         d.turn_to(270)
-        d.drive(-200)
+        d.drive(-100)
         d.turn_to(260)

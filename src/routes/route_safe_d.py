@@ -46,5 +46,5 @@ class SafeDRoute(DefenseRoute):
         d.turn_to(180 + 45)
         d.drive(-800)
         d.turn_to(180)
-        d.drive(-560)
+        d.drive(-598)
         d.drive(-70)
