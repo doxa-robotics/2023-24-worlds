@@ -29,8 +29,8 @@ class SixBallRoute(OffenseRoute):
         d.turn_to(110)
         d.drive(-100)
         d.turn_to(110)
-        d.drive(-700)
         p.wing_piston.close()
+        d.drive(-700)
         d.turn_to(100)
         # the triball slips out here
         d.drive(-360, callback_distance=-150,

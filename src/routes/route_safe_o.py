@@ -27,8 +27,8 @@ class SafeORoute(OffenseRoute):
         d.turn_to(110)
         d.drive(-100)
         d.turn_to(110)
-        d.drive(-700)
         p.wing_piston.close()
+        d.drive(-700)
         d.turn_to(100)
         d.drive(-300, callback_distance=-120,
                 callback=lambda: p.claw_piston.open())  # the triball slips out here
