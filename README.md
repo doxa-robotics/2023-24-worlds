@@ -4,6 +4,8 @@ This is our team's source for the 2023 VEX Robotics World Championship. Hopefull
 
 I'm thinking about trying to get a MATLAB educational license and using that next year, or at least switching to PROS instead of my home-built solution (it works well, but still, _Python_).
 
+By the way, a lot of the older commits attributed to @rh0820 were actually authored by @zabackary; I just was lazy and didn't touch the git config. In addition, I don't think @plumking actually touched the project (he was doing scouting/booth planning) so those commits are likely @Spacyhula's. Most of the final code was written by @zabackary, but the drive team, @Spacyhula, and @rh0820 were essential for making this happen by setting up the field, etc., and @Spacyhula and @rh0820 helped think up a lot of the ideas that went into the final product.
+
 ## Setup
 
 1. Install vexmason if you don't have it already.
